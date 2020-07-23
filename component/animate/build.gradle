@@ -1,0 +1,15 @@
+plugins {
+    id 'java-library'
+}
+
+group 'net.labyfy.component'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    api 'org.joml:joml:1.9.25'
+
+}
