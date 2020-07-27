@@ -1,11 +1,11 @@
 package net.labyfy.component.animate.model.animation;
 
-import net.labyfy.component.animate.model.armature.bone.Bone;
+import net.labyfy.component.animate.Node;
 
 public interface AnimationChannel {
 
   Animation getAnimation();
 
-  Bone getTarget();
+  Node getTarget();
 
 }

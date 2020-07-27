@@ -4,6 +4,10 @@ plugins {
 
 group 'net.labyfy.component'
 
+labyfy {
+    minecraftVersions '1.15.2'
+}
+
 repositories {
     mavenCentral()
 }
@@ -11,5 +15,21 @@ repositories {
 dependencies {
 
     api 'org.joml:joml:1.9.25'
+    internalImplementation 'org.lwjgl:lwjgl-assimp:3.2.1'
+    internalImplementation group: 'org.lwjgl', name: 'lwjgl-assimp', version: '3.2.1', classifier: 'natives-macos'
+    internalImplementation project(':component:inject')
+    v1_15_2Implementation project(':component:transform:javassist')
+    v1_15_2Implementation project(':component:transform:asm')
+
+    annotationProcessor project(':component:annotation-processing:autoload')
+    internalAnnotationProcessor project(':component:annotation-processing:autoload')
+    v1_15_2AnnotationProcessor project(':component:annotation-processing:autoload')
+
+    api project(':component:annotation-processing:autoload')
+
+    labyfy 'org.joml:joml:1.9.25'
+    labyfy 'org.lwjgl:lwjgl-assimp:3.2.1'
+    labyfy group: 'org.lwjgl', name: 'lwjgl-assimp', version: '3.2.1', classifier: 'natives-macos'
+    labyfy project(':component:inject')
 
 }

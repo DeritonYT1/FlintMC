@@ -10,5 +10,6 @@ public interface Node {
 
   boolean hasParent();
 
+  String getName();
 
 }

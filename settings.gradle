@@ -92,3 +92,6 @@ buildCache {
         push = isPush
     }
 }
+include 'component:render'
+findProject(':component:render')?.name = 'render'
+

@@ -6,8 +6,6 @@ import net.labyfy.component.animate.scene.Scene;
 
 public interface Animation {
 
-  Armature getArmature();
-
   AnimationChannel[] getChannels();
 
   AnimationChannel getChannel(Node node);

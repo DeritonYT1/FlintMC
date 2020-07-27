@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+}
+
+group 'net.labyfy.component'
+
+repositories {
+    mavenCentral()
+}
+
+labyfy{
+    minecraftVersions '1.15.2'
+}
+
+dependencies {
+}

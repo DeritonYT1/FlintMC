@@ -8,5 +8,10 @@ public interface Mesh {
 
   boolean hasArmature();
 
+  Face[] getFaces();
+
+  Vertex[] getVertices();
+
+  int getIndex();
 
 }

@@ -8,4 +8,6 @@ public interface BoneWeight {
 
   Bone getBone();
 
+  float getWeight();
+
 }
