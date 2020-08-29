@@ -3,7 +3,10 @@ package net.labyfy.internal.component.render;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import net.labyfy.component.inject.implement.Implement;
-import net.labyfy.component.render.*;
+import net.labyfy.component.render.Vertex;
+import net.labyfy.component.render.VertexBox;
+import net.labyfy.component.render.VertexBuffer;
+import net.labyfy.component.render.VertexQuad;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -54,14 +57,12 @@ public class VertexBoxImpl implements VertexBox {
 
         vertexFactory.create(width, height, 0)
             .setTextureUV(textureOffset.x + (depth + width) / textureDensity.x, textureOffset.y + (depth + height) / textureDensity.y)
-
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(-1, 0, 0),
 
         vertexFactory.create(0, height, 0)
             .setTextureUV(textureOffset.x + depth / textureDensity.x, textureOffset.y + (depth + height) / textureDensity.y)
-
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(-1, 0, 0)
@@ -70,21 +71,18 @@ public class VertexBoxImpl implements VertexBox {
     this.back = vertexQuadBuilderFactory.create(
         vertexFactory.create(0, height, depth)
             .setTextureUV(textureOffset.x + ((depth + width + depth + width) / textureDensity.x), textureOffset.y + ((depth + height) / textureDensity.y))
-
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(0, 0, -1)
         ,
         vertexFactory.create(0, 0, depth)
             .setTextureUV(textureOffset.x + ((depth + width + depth + width) / textureDensity.x), textureOffset.y + (depth / textureDensity.y))
-
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(0, 0, -1)
         ,
         vertexFactory.create(width, 0, depth)
             .setTextureUV(textureOffset.x + ((depth + width + depth) / textureDensity.x), textureOffset.y + (depth / textureDensity.y))
-
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(0, 0, -1)
@@ -97,9 +95,9 @@ public class VertexBoxImpl implements VertexBox {
             .setNormal(0, 0, -1)
     );
 
-    this.left = vertexQuadBuilderFactory.create(
+    this.right = vertexQuadBuilderFactory.create(
         vertexFactory.create(0, 0, 0)
-            .setTextureUV(textureOffset.x, textureOffset.y + (depth + height) / textureDensity.y)
+            .setTextureUV(textureOffset.x + depth / textureDensity.x, textureOffset.y + depth / textureDensity.y)
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(1, 0, 0),
@@ -109,7 +107,7 @@ public class VertexBoxImpl implements VertexBox {
             .setLightmapUV(lightMap)
             .setNormal(1, 0, 0),
         vertexFactory.create(0, height, depth)
-            .setTextureUV(textureOffset.x + depth / textureDensity.x, textureOffset.y + depth / textureDensity.y)
+            .setTextureUV(textureOffset.x, textureOffset.y + (depth + height) / textureDensity.y)
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(1, 0, 0),
@@ -120,7 +118,7 @@ public class VertexBoxImpl implements VertexBox {
             .setNormal(1, 0, 0)
     );
 
-    this.right = vertexQuadBuilderFactory.create(
+    this.left = vertexQuadBuilderFactory.create(
         vertexFactory.create(width, 0, 0)
             .setTextureUV(textureOffset.x + (depth + width) / textureDensity.x, textureOffset.y + depth / textureDensity.y)
             .setColor(color)
@@ -129,18 +127,24 @@ public class VertexBoxImpl implements VertexBox {
         ,
         vertexFactory.create(width, 0, depth)
             .setTextureUV(textureOffset.x + (depth + width + depth) / textureDensity.x, textureOffset.y + depth / textureDensity.y)
+
+
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(-1, 0, 0)
         ,
         vertexFactory.create(width, height, depth)
             .setTextureUV(textureOffset.x + (depth + width + depth) / textureDensity.x, textureOffset.y + (depth + height) / textureDensity.y)
+
+
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(-1, 0, 0)
         ,
         vertexFactory.create(width, height, 0)
             .setTextureUV(textureOffset.x + (depth + width) / textureDensity.x, textureOffset.y + (depth + height) / textureDensity.y)
+
+
             .setColor(color)
             .setLightmapUV(lightMap)
             .setNormal(-1, 0, 0)
@@ -231,16 +235,26 @@ public class VertexBoxImpl implements VertexBox {
     return this;
   }
 
-  public VertexBox render(MatrixStack matrixStack, VertexBuffer vertexBuffer) {
-    matrixStack.push()
+  public VertexBox setColor(Color color) {
+    this.back.setColor(color);
+    this.front.setColor(color);
+    this.right.setColor(color);
+    this.left.setColor(color);
+    this.top.setColor(color);
+    this.bottom.setColor(color);
+    return this;
+  }
+
+  public VertexBox render(VertexBuffer vertexBuffer) {
+    vertexBuffer.getMatrixStack().push()
         .translate(this.position);
-    this.back.render(matrixStack, vertexBuffer);
-    this.front.render(matrixStack, vertexBuffer);
-    this.right.render(matrixStack, vertexBuffer);
-    this.left.render(matrixStack, vertexBuffer);
-    this.top.render(matrixStack, vertexBuffer);
-    this.bottom.render(matrixStack, vertexBuffer);
-    matrixStack.pop();
+    this.back.render(vertexBuffer);
+    this.front.render(vertexBuffer);
+    this.right.render(vertexBuffer);
+    this.left.render(vertexBuffer);
+    this.top.render(vertexBuffer);
+    this.bottom.render(vertexBuffer);
+    vertexBuffer.getMatrixStack().pop();
     return this;
   }
 }

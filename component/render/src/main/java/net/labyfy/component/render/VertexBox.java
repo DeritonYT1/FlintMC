@@ -45,16 +45,17 @@ public interface VertexBox {
 
   VertexBox setLightmapUV(int lightmapUV);
 
+  VertexBox setColor(Color color);
+
   Vector3f getPosition();
 
   /**
    * Renders this box to a given 3d context
    *
-   * @param matrixStack  the world context to render into
    * @param vertexBuffer the vertex data to render into
    * @return this
    */
-  VertexBox render(MatrixStack matrixStack, VertexBuffer vertexBuffer);
+  VertexBox render(VertexBuffer vertexBuffer);
 
   @AssistedFactory(VertexBox.class)
   interface Factory {
