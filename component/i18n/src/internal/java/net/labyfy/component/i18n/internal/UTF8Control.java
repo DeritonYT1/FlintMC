@@ -1,4 +1,4 @@
-package net.labyfy.component.i18n;
+package net.labyfy.component.i18n.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,19 @@ import java.util.ResourceBundle;
  */
 public class UTF8Control extends ResourceBundle.Control {
 
+    /**
+     * Creates a new {@link ResourceBundle} with the given parameters.
+     *
+     * @param baseName The base name of the resource bundle.
+     * @param locale The localization for the resource bundle.
+     * @param format The encoding codec for the resource bundle. <b>Note:</b> Is not used.
+     * @param loader The class loader for the resource bundle.
+     * @param reload {@code true} if the resource bundle should be reloaded, otherwise {@code false}
+     * @return The resource bundle instance, or {@code null} if none could be found.
+     * @throws IllegalAccessException If the class or its nullary constructor is not accessible.
+     * @throws InstantiationException If the instantiation of a class fails for some other reason.
+     * @throws IOException If an error occurred when reading resources using any I/O operations.
+     */
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {
 
