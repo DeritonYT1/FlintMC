@@ -65,11 +65,18 @@ public interface Player<T> extends PlayerSkinProfile, CooldownTracking {
     ChatComponent getDisplayNameAndUniqueId();
 
     /**
-     * Retrieves the unique identifier of this player.
+     * Retrieves the unique identifier of this entity.
      *
-     * @return The unique identifier of this player
+     * @return The unique identifier of this entity
      */
     UUID getUniqueId();
+
+    /**
+     * Retrieves the unique identifier of this player.
+     *
+     * @return The unique identifier of this entity.
+     */
+    UUID getPlayerUniqueId();
 
     /**
      * Retrieves the health of this player.

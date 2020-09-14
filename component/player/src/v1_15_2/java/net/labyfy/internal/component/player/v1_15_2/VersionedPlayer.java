@@ -42,8 +42,6 @@ import java.util.UUID;
 @Implement(value = Player.class, version = "1.15.2")
 public class VersionedPlayer implements Player<AbstractClientPlayerEntity> {
 
-    private AbstractClientPlayerEntity player;
-
     protected final HandSerializer<net.minecraft.util.Hand> handSerializer;
     protected final HandSideSerializer<HandSide> handSideSerializer;
     protected final GameModeSerializer<GameType> gameModeSerializer;
@@ -53,6 +51,8 @@ public class VersionedPlayer implements Player<AbstractClientPlayerEntity> {
     protected final PoseSerializer<Pose> poseSerializer;
     protected final SoundCategorySerializer<net.minecraft.util.SoundCategory> soundCategorySerializer;
     protected final SoundSerializer<SoundEvent> soundSerializer;
+
+    private AbstractClientPlayerEntity player;
 
     @Inject
     protected VersionedPlayer(
@@ -149,13 +149,18 @@ public class VersionedPlayer implements Player<AbstractClientPlayerEntity> {
     }
 
     /**
-     * Retrieves the unique identifier of this player.
+     * Retrieves the unique identifier of this entity.
      *
-     * @return The unique identifier of this player
+     * @return The unique identifier of this entity.
      */
     @Override
     public UUID getUniqueId() {
         return this.player.getUniqueID();
+    }
+
+    @Override
+    public UUID getPlayerUniqueId() {
+        return this.getGameProfile().getUniqueId();
     }
 
     /**

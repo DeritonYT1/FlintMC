@@ -49,7 +49,7 @@ public class VersionedTabOverlay implements TabOverlay {
      */
     @Override
     public void updateHeader(ChatComponent header) {
-        Minecraft.getInstance().ingameGUI.getTabList().setFooter(
+        Minecraft.getInstance().ingameGUI.getTabList().setHeader(
                 (ITextComponent) this.minecraftComponentMapper.toMinecraft(header)
         );
     }

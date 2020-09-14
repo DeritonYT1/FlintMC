@@ -1,4 +1,4 @@
-package net.labyfy.internal.component.player.v1_15_2.serializer.util;
+package net.labyfy.internal.component.player.v1_15_2.serializer.gameprofile;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -15,7 +15,7 @@ import java.util.Map;
  * 1.15.2 implementation of {@link GameProfileSerializer}
  */
 @Singleton
-@Implement(GameProfileSerializer.class)
+@Implement(value = GameProfileSerializer.class, version = "1.15.2")
 public class VersionedGameProfileSerializer implements GameProfileSerializer<com.mojang.authlib.GameProfile> {
 
     private final GameProfile.Builder profileBuilder;

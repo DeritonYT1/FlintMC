@@ -1,4 +1,4 @@
-package net.labyfy.internal.component.player.v1_15_2.serializer.gameprofile;
+package net.labyfy.internal.component.player.v1_15_2.serializer.util;
 
 import com.google.inject.Singleton;
 import net.labyfy.component.inject.implement.Implement;
