@@ -95,7 +95,7 @@ public class VersionedMinecraftComponentMapper implements MinecraftComponentMapp
     );
 
     for (ChatComponent extra : component.extras()) {
-      result.deepCopy().append((ITextComponent) this.toMinecraft(extra));
+      ((IFormattableTextComponent) result).append((ITextComponent) this.toMinecraft(extra));
     }
 
     return result;
