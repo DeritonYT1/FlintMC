@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 @Implement(value = ResourceLocationProvider.class, version = "1.16.3")
 public class VersionedResourceLocationProvider implements ResourceLocationProvider{
 
-  private final VersionedResourceLocation.Factory resourceLocationFactory;
+  private final ResourceLocation.Factory resourceLocationFactory;
 
   @Inject
-  private VersionedResourceLocationProvider(VersionedResourceLocation.Factory resourceLocationFactory) {
+  private VersionedResourceLocationProvider(ResourceLocation.Factory resourceLocationFactory) {
     this.resourceLocationFactory = resourceLocationFactory;
   }
 
