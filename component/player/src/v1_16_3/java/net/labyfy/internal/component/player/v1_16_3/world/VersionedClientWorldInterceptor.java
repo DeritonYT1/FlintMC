@@ -13,7 +13,6 @@ import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.entity.Entity;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Object intercepts {@link net.minecraft.client.world.ClientWorld} to better cache the players on the world.
@@ -22,19 +21,16 @@ import org.apache.logging.log4j.Logger;
 @AutoLoad
 public class VersionedClientWorldInterceptor {
 
-  private final Logger logger;
   private final ClientWorld clientWorld;
   private final ClientPlayer.Factory factoryClientPlayer;
   private final RemoteClientPlayer.Factory<AbstractClientPlayerEntity> factoryRemoteClientPlayer;
 
   @Inject
   private VersionedClientWorldInterceptor(
-          Logger logger,
           ClientWorld clientWorld,
           ClientPlayer.Factory factoryClientPlayer,
           RemoteClientPlayer.Factory factoryRemoteClientPlayer
   ) {
-    this.logger = logger;
     this.clientWorld = clientWorld;
     this.factoryClientPlayer = factoryClientPlayer;
     this.factoryRemoteClientPlayer = factoryRemoteClientPlayer;
@@ -80,7 +76,7 @@ public class VersionedClientWorldInterceptor {
     Entity entity = (Entity) args[0];
     if (entity instanceof AbstractClientPlayerEntity) {
       AbstractClientPlayerEntity playerEntity = (AbstractClientPlayerEntity) entity;
-      boolean removed = this.clientWorld.removeIfPlayer(
+      this.clientWorld.removeIfPlayer(
               player -> player
                       .getGameProfile()
                       .getUniqueId()
@@ -88,9 +84,6 @@ public class VersionedClientWorldInterceptor {
                               playerEntity.getGameProfile().getId()
                       )
       );
-
-      this.logger.info("Player was " + (removed ? " removed!" : " not removed!"));
-
     }
   }
 

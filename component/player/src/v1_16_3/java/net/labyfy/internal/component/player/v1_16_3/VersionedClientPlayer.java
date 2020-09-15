@@ -253,6 +253,17 @@ public class VersionedClientPlayer extends VersionedPlayer implements ClientPlay
    * {@inheritDoc}
    */
   @Override
+  public void sendMessage(ChatComponent component) {
+    this.player.sendMessage(
+            (ITextComponent) this.minecraftComponentMapper.toMinecraft(component),
+            getPlayerUniqueId()
+    );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public void closeScreenAndDropStack() {
     this.player.closeScreenAndDropStack();
   }

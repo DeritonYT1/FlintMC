@@ -138,7 +138,7 @@ public class VersionedPlayer implements Player<AbstractClientPlayerEntity> {
             (new StringTextComponent(""))
                     .append(this.player.getName())
                     .appendString(" (")
-                    .appendString(this.getUniqueId().toString())
+                    .appendString(this.getPlayerUniqueId().toString())
                     .appendString(")")
     );
   }
@@ -148,7 +148,7 @@ public class VersionedPlayer implements Player<AbstractClientPlayerEntity> {
    */
   @Override
   public UUID getUniqueId() {
-    return this.getGameProfile().getUniqueId();
+    return this.player.getUniqueID();
   }
 
   @Override

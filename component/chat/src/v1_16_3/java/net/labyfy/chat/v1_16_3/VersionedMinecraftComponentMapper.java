@@ -105,7 +105,7 @@ public class VersionedMinecraftComponentMapper implements MinecraftComponentMapp
    * Built a new style for the Minecraft text component.
    *
    * @param component The Labyfy chat component
-   * @param style The style of the chat component
+   * @param style     The style of the chat component
    * @return The built style
    */
   private Style buildStyle(ChatComponent component, Style style) {
@@ -198,7 +198,7 @@ public class VersionedMinecraftComponentMapper implements MinecraftComponentMapp
         return new SelectorTextComponent(component.getUnformattedText());
       }
 
-    } else if (component instanceof net.labyfy.chat.component.TextComponent) {
+    } else if (component instanceof TextComponent) {
 
       String text = ((TextComponent) component).text();
       if (text != null) {
@@ -280,7 +280,7 @@ public class VersionedMinecraftComponentMapper implements MinecraftComponentMapp
    * Apply the style for the Labyfy {@link ChatComponent}.
    *
    * @param result The Labyfy chat component whose style is to be set
-   * @param style The style for the chat component
+   * @param style  The style for the chat component
    */
   private void applyStyle(ChatComponent result, Style style) {
     if (style.getBold()) {
@@ -304,37 +304,45 @@ public class VersionedMinecraftComponentMapper implements MinecraftComponentMapp
     }
 
     if (style.getColor() != null) {
-      ChatColor color = ChatColor.parse(style.getColor().func_240747_b_());
+      String coloredString = style.getColor().func_240747_b_();
+
+      ChatColor color = coloredString.startsWith("#") ?
+              ChatColor.parse(coloredString) :
+              ChatColor.getByName(coloredString);
+
       if (color != null) {
         result.color(color);
       }
+
     }
 
 
     if (style.getClickEvent() != null) {
       result.clickEvent(
               ClickEvent.of(
-                      ClickEvent.Action.valueOf(style.getClickEvent().getAction().getCanonicalName()),
+                      ClickEvent.Action.valueOf(style.getClickEvent().getAction().name()),
                       style.getClickEvent().getValue()
               )
       );
     }
 
     if (style.getHoverEvent() != null) {
-      HoverEvent.Action action = HoverEvent.Action.valueOf(style.getHoverEvent().getAction().getCanonicalName());
+      HoverEvent.Action action = HoverEvent.Action.valueOf(style.getHoverEvent().getAction().getCanonicalName().toUpperCase());
       ITextComponent component = style.getHoverEvent().getParameter(net.minecraft.util.text.event.HoverEvent.Action.SHOW_TEXT);
 
-      HoverContent content = action == HoverEvent.Action.SHOW_TEXT || action == HoverEvent.Action.SHOW_ACHIEVEMENT ?
-              new HoverText(this.fromMinecraft(component)) :
-              this.factory.gson()
-                      .getGson()
-                      .fromJson(
-                              JsonParser.parseString(component.getUnformattedComponentText()),
-                              action.getContentClass()
-                      );
+      if (component != null) {
+        HoverContent content = action == HoverEvent.Action.SHOW_TEXT || action == HoverEvent.Action.SHOW_ACHIEVEMENT ?
+                new HoverText(this.fromMinecraft(component)) :
+                this.factory.gson()
+                        .getGson()
+                        .fromJson(
+                                JsonParser.parseString(component.getUnformattedComponentText()),
+                                action.getContentClass()
+                        );
 
-      if (content != null) {
-        result.hoverEvent(HoverEvent.of(content));
+        if (content != null) {
+          result.hoverEvent(HoverEvent.of(content));
+        }
       }
     }
 

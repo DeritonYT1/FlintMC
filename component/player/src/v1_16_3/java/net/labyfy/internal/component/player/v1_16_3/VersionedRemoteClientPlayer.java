@@ -3,6 +3,7 @@ package net.labyfy.internal.component.player.v1_16_3;
 import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import net.labyfy.chat.MinecraftComponentMapper;
+import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.player.RemoteClientPlayer;
 import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
@@ -17,6 +18,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 
 /**
@@ -75,5 +77,16 @@ public class VersionedRemoteClientPlayer extends VersionedPlayer implements Remo
   @Override
   public boolean isInRangeToRender(double distance) {
     return this.player.isInRangeToRenderDist(distance);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void sendMessage(ChatComponent component) {
+    this.player.sendMessage(
+            (ITextComponent) this.minecraftComponentMapper.toMinecraft(component),
+            getPlayerUniqueId()
+    );
   }
 }
