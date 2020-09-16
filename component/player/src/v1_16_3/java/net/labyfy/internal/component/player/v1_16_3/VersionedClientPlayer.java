@@ -242,7 +242,7 @@ public class VersionedClientPlayer extends VersionedPlayer implements ClientPlay
    */
   @Override
   public boolean performCommand(String command) {
-    if(!command.startsWith("/")) return false;
+    if (!command.startsWith("/")) return false;
 
     Minecraft.getInstance().getConnection().sendPacket(new CChatMessagePacket(command));
 
@@ -258,6 +258,27 @@ public class VersionedClientPlayer extends VersionedPlayer implements ClientPlay
             (ITextComponent) this.minecraftComponentMapper.toMinecraft(component),
             getPlayerUniqueId()
     );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean drop(boolean dropEntireStack) {
+    return this.player.drop(dropEntireStack);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void swingArm(Hand hand) {
+    this.player.swingArm(this.handSerializer.serialize(hand));
+  }
+
+  @Override
+  public void respawnPlayer() {
+    this.player.respawnPlayer();
   }
 
   /**
@@ -376,10 +397,10 @@ public class VersionedClientPlayer extends VersionedPlayer implements ClientPlay
   public String getBiome() {
     World world = (World) this.getWorld().getClientWorld();
     Entity renderViewEntity = Minecraft.getInstance().getRenderViewEntity();
-    if(renderViewEntity == null) return null;
+    if (renderViewEntity == null) return null;
     BlockPos blockPos = new BlockPos(renderViewEntity.getPositionVec());
 
-    if(world != null) {
+    if (world != null) {
       String biomePath = world.func_241828_r().func_243612_b(Registry.BIOME_KEY).getKey(world.getBiome(blockPos)).getPath();
       String[] split = biomePath.split("_");
       StringBuilder builder = new StringBuilder();
@@ -387,7 +408,7 @@ public class VersionedClientPlayer extends VersionedPlayer implements ClientPlay
       for (int i = 0; i < split.length; i++) {
         String biomeName = split[i];
         biomeName = biomeName.substring(0, 1).toUpperCase() + biomeName.substring(1).toLowerCase();
-        if(i == split.length - 1) {
+        if (i == split.length - 1) {
           builder.append(biomeName);
           break;
         }
