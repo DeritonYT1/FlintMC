@@ -18,12 +18,12 @@ import java.util.Map;
 @Implement(value = GameProfileSerializer.class, version = "1.16.3")
 public class VersionedGameProfileSerializer implements GameProfileSerializer<com.mojang.authlib.GameProfile> {
 
-  private final GameProfile.Builder profileBuilder;
+  private final GameProfile.Factory profileFactory;
   private final PropertyMapSerializer<PropertyMap> propertyMapSerializer;
 
   @Inject
-  public VersionedGameProfileSerializer(GameProfile.Builder profileBuilder, PropertyMapSerializer propertyMapSerializer) {
-    this.profileBuilder = profileBuilder;
+  public VersionedGameProfileSerializer(GameProfile.Factory profileFactory, PropertyMapSerializer propertyMapSerializer) {
+    this.profileFactory = profileFactory;
     this.propertyMapSerializer = propertyMapSerializer;
   }
 
@@ -35,14 +35,12 @@ public class VersionedGameProfileSerializer implements GameProfileSerializer<com
    */
   @Override
   public GameProfile deserialize(com.mojang.authlib.GameProfile profile) {
-    return this.profileBuilder
-            .setName(profile.getName())
-            .setUniqueId(profile.getId())
-            .setProperties(
-                    this.propertyMapSerializer.deserialize(
-                            profile.getProperties()
-                    )
-            ).build();
+
+    return this.profileFactory.create(
+            profile.getId(),
+            profile.getName(),
+            this.propertyMapSerializer.deserialize(profile.getProperties())
+    );
   }
 
   /**

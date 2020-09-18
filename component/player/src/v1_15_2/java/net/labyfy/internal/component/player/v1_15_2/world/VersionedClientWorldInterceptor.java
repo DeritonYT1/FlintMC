@@ -22,18 +22,18 @@ import net.minecraft.entity.Entity;
 public class VersionedClientWorldInterceptor {
 
   private final ClientWorld clientWorld;
-  private final ClientPlayer.Factory factoryClientPlayer;
-  private final RemoteClientPlayer.Factory<AbstractClientPlayerEntity> factoryRemoteClientPlayer;
+  private final ClientPlayer clientPlayer;
+  private final RemoteClientPlayer.Provider remoteClientPlayerProvider;
 
   @Inject
   private VersionedClientWorldInterceptor(
+          ClientPlayer clientPlayer,
           ClientWorld clientWorld,
-          ClientPlayer.Factory factoryClientPlayer,
-          RemoteClientPlayer.Factory factoryRemoteClientPlayer
+          RemoteClientPlayer.Provider remoteClientPlayerProvider
   ) {
+    this.clientPlayer = clientPlayer;
     this.clientWorld = clientWorld;
-    this.factoryClientPlayer = factoryClientPlayer;
-    this.factoryRemoteClientPlayer = factoryRemoteClientPlayer;
+    this.remoteClientPlayerProvider = remoteClientPlayerProvider;
   }
 
   /**
@@ -53,14 +53,14 @@ public class VersionedClientWorldInterceptor {
   public void hookAfterAddPlayer(@Named("args") Object[] args) {
     AbstractClientPlayerEntity playerEntity = (AbstractClientPlayerEntity) args[1];
     if (playerEntity instanceof ClientPlayerEntity) {
-      this.clientWorld.addPlayer(this.factoryClientPlayer.create());
+      this.clientWorld.addPlayer(this.clientPlayer);
     } else if (playerEntity instanceof RemoteClientPlayerEntity) {
-      this.clientWorld.addPlayer(this.factoryRemoteClientPlayer.create(playerEntity));
+      this.clientWorld.addPlayer(this.remoteClientPlayerProvider.get(playerEntity));
     }
   }
 
   /**
-   * Appends to the {@link net.minecraft.client.world.ClientWorld#removeEntity(Entity)} method.
+   * Appends to the removeEntity method in the client world of minecraft.
    *
    * @param args The parameters of the hooked method
    */
@@ -78,8 +78,7 @@ public class VersionedClientWorldInterceptor {
       AbstractClientPlayerEntity playerEntity = (AbstractClientPlayerEntity) entity;
       this.clientWorld.removeIfPlayer(
               player -> player
-                      .getGameProfile()
-                      .getUniqueId()
+                      .getPlayerUniqueId()
                       .equals(
                               playerEntity.getGameProfile().getId()
                       )

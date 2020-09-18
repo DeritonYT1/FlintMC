@@ -36,7 +36,7 @@ public class VersionedSoundSerializer implements SoundSerializer<SoundEvent> {
      */
     @Override
     public Sound deserialize(SoundEvent value) {
-        return this.soundFactory.create(value.getName().getPath());
+        return this.soundFactory.create(this.locationProvider.get(value.getName().getPath()));
     }
 
     /**

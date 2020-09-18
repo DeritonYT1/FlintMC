@@ -7,7 +7,6 @@ import net.labyfy.component.player.Player;
 import net.labyfy.component.player.serializer.world.DimensionSerializer;
 import net.labyfy.component.player.world.ClientWorld;
 import net.labyfy.component.player.world.Dimension;
-import net.labyfy.component.processing.autoload.AutoLoad;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -19,11 +18,9 @@ import java.util.function.Predicate;
  * 1.15.2 implementation of {@link ClientWorld}
  */
 @Singleton
-@AutoLoad
 @Implement(value = ClientWorld.class, version = "1.15.2")
 public class VersionedClientWorld implements ClientWorld {
 
-    private final net.minecraft.client.world.ClientWorld clientWorld;
     private final DimensionSerializer<DimensionType> dimensionSerializer;
 
     private final List<Player> players;
@@ -33,7 +30,6 @@ public class VersionedClientWorld implements ClientWorld {
             DimensionSerializer dimensionSerializer
     ) {
         this.dimensionSerializer = dimensionSerializer;
-        this.clientWorld = Minecraft.getInstance().player.worldClient;
         this.players = new ArrayList<>();
     }
 
@@ -44,7 +40,7 @@ public class VersionedClientWorld implements ClientWorld {
      */
     @Override
     public Object getClientWorld() {
-        return this.clientWorld;
+        return Minecraft.getInstance().world;
     }
 
     /**
@@ -54,7 +50,7 @@ public class VersionedClientWorld implements ClientWorld {
      */
     @Override
     public long getTime() {
-        return this.clientWorld.getDayTime();
+        return Minecraft.getInstance().world.getDayTime();
     }
 
     /**
@@ -64,7 +60,7 @@ public class VersionedClientWorld implements ClientWorld {
      */
     @Override
     public int getPlayerCount() {
-        return this.clientWorld.getPlayers().size();
+        return Minecraft.getInstance().world.getPlayers().size();
     }
 
     /**
@@ -107,7 +103,7 @@ public class VersionedClientWorld implements ClientWorld {
      */
     @Override
     public int getCountLoadedEntities() {
-        return this.clientWorld.getCountLoadedEntities();
+        return Minecraft.getInstance().world.getCountLoadedEntities();
     }
 
     /**
@@ -117,7 +113,7 @@ public class VersionedClientWorld implements ClientWorld {
      */
     @Override
     public Dimension getDimension() {
-        return this.dimensionSerializer.deserialize(this.clientWorld.getDimension().getType());
+        return this.dimensionSerializer.deserialize(Minecraft.getInstance().world.getDimension().getType());
     }
 
     /**
@@ -127,7 +123,7 @@ public class VersionedClientWorld implements ClientWorld {
      */
     @Override
     public Object getScoreboard() {
-        return this.clientWorld.getScoreboard();
+        return Minecraft.getInstance().world.getScoreboard();
     }
 
 

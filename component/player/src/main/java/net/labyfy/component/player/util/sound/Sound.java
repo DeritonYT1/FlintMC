@@ -1,5 +1,7 @@
 package net.labyfy.component.player.util.sound;
 
+import com.google.inject.assistedinject.Assisted;
+import net.labyfy.component.inject.assisted.AssistedFactory;
 import net.labyfy.component.resources.ResourceLocation;
 
 /**
@@ -7,25 +9,26 @@ import net.labyfy.component.resources.ResourceLocation;
  */
 public interface Sound {
 
+  /**
+   * Retrieves the resource location of this sound.
+   *
+   * @return The resource location of this sound.
+   */
+  ResourceLocation getName();
+
+  /**
+   * A factory class for {@link Sound}
+   */
+  @AssistedFactory(Sound.class)
+  interface Factory {
+
     /**
-     * Retrieves the resource location of this sound.
+     * Creates a new {@link Sound} with the given path.
      *
-     * @return The resource location of this sound.
+     * @param path The path of the sound.
+     * @return The created sound.
      */
-    ResourceLocation getName();
-
-    /**
-     * A factory class for {@link Sound}
-     */
-    interface Factory {
-
-        /**
-         * Creates a new {@link Sound} with the given path.
-         *
-         * @param path The path of the sound.
-         * @return The created sound.
-         */
-        Sound create(String path);
-    }
+    Sound create(@Assisted("path") ResourceLocation path);
+  }
 
 }

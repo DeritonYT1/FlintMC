@@ -18,54 +18,52 @@ import java.util.Map;
 @Implement(value = GameProfileSerializer.class, version = "1.15.2")
 public class VersionedGameProfileSerializer implements GameProfileSerializer<com.mojang.authlib.GameProfile> {
 
-    private final GameProfile.Builder profileBuilder;
-    private final PropertyMapSerializer<PropertyMap> propertyMapSerializer;
+  private final GameProfile.Factory profileFactory;
+  private final PropertyMapSerializer<PropertyMap> propertyMapSerializer;
 
-    @Inject
-    public VersionedGameProfileSerializer(GameProfile.Builder profileBuilder, PropertyMapSerializer propertyMapSerializer) {
-        this.profileBuilder = profileBuilder;
-        this.propertyMapSerializer = propertyMapSerializer;
+  @Inject
+  public VersionedGameProfileSerializer(GameProfile.Factory profileFactory, PropertyMapSerializer propertyMapSerializer) {
+    this.profileFactory = profileFactory;
+    this.propertyMapSerializer = propertyMapSerializer;
+  }
+
+  /**
+   * Deserializes the Mojang {@link com.mojang.authlib.GameProfile} to the Labyfy {@link GameProfile}
+   *
+   * @param profile The game profile to deserialize
+   * @return A deserialized {@link GameProfile}
+   */
+  @Override
+  public GameProfile deserialize(com.mojang.authlib.GameProfile profile) {
+
+    return this.profileFactory.create(
+            profile.getId(),
+            profile.getName(),
+            this.propertyMapSerializer.deserialize(profile.getProperties())
+    );
+  }
+
+  /**
+   * Serializes the Labyfy {@link GameProfile} to the Mojang {@link com.mojang.authlib.GameProfile}.
+   *
+   * @param profile The profile to serialize
+   * @return A serialized game profile
+   */
+  @Override
+  public com.mojang.authlib.GameProfile serialize(GameProfile profile) {
+    com.mojang.authlib.GameProfile gameProfile = new com.mojang.authlib.GameProfile(
+            profile.getUniqueId(),
+            profile.getName()
+    );
+
+    PropertyMap properties = this.propertyMapSerializer.serialize(profile.getProperties());
+
+    for (Map.Entry<String, Property> entry : properties.entries()) {
+      gameProfile.getProperties().put(
+              entry.getKey(),
+              entry.getValue()
+      );
     }
-
-    /**
-     * Deserializes the Mojang {@link com.mojang.authlib.GameProfile} to the Labyfy {@link GameProfile}
-     *
-     * @param profile The game profile to deserialize
-     * @return A deserialized {@link GameProfile}
-     */
-    @Override
-    public GameProfile deserialize(com.mojang.authlib.GameProfile profile) {
-        return this.profileBuilder
-                .setName(profile.getName())
-                .setUniqueId(profile.getId())
-                .setProperties(
-                        this.propertyMapSerializer.deserialize(
-                                profile.getProperties()
-                        )
-                ).build();
-    }
-
-    /**
-     * Serializes the Labyfy {@link GameProfile} to the Mojang {@link com.mojang.authlib.GameProfile}.
-     *
-     * @param profile The profile to serialize
-     * @return A serialized game profile
-     */
-    @Override
-    public com.mojang.authlib.GameProfile serialize(GameProfile profile) {
-        com.mojang.authlib.GameProfile gameProfile = new com.mojang.authlib.GameProfile(
-                profile.getUniqueId(),
-                profile.getName()
-        );
-
-        PropertyMap properties = this.propertyMapSerializer.serialize(profile.getProperties());
-
-        for (Map.Entry<String, Property> entry : properties.entries()) {
-            gameProfile.getProperties().put(
-                    entry.getKey(),
-                    entry.getValue()
-            );
-        }
-        return gameProfile;
-    }
+    return gameProfile;
+  }
 }

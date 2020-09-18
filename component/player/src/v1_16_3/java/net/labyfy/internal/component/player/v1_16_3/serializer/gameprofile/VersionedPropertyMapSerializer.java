@@ -1,13 +1,13 @@
 package net.labyfy.internal.component.player.v1_16_3.serializer.gameprofile;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.player.gameprofile.property.Property;
 import net.labyfy.component.player.gameprofile.property.PropertyMap;
 import net.labyfy.component.player.serializer.gameprofile.PropertyMapSerializer;
-import net.labyfy.internal.component.player.gameprofile.property.DefaultProperty;
-import net.labyfy.internal.component.player.gameprofile.property.DefaultPropertyMap;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +18,15 @@ import java.util.Set;
 @Implement(value = PropertyMapSerializer.class, version = "1.16.3")
 public class VersionedPropertyMapSerializer implements PropertyMapSerializer<com.mojang.authlib.properties.PropertyMap> {
 
+  private final Property.Factory propertyFactory;
+  private final PropertyMap.Factory propertyMapFactory;
+
+  @Inject
+  public VersionedPropertyMapSerializer(Property.Factory propertyFactory, PropertyMap.Factory propertyMapFactory) {
+    this.propertyFactory = propertyFactory;
+      this.propertyMapFactory = propertyMapFactory;
+  }
+
   /**
    * Deserializes the Mojang {@link com.mojang.authlib.properties.PropertyMap}
    * to the Labyfy {@link PropertyMap}
@@ -27,12 +36,12 @@ public class VersionedPropertyMapSerializer implements PropertyMapSerializer<com
    */
   @Override
   public PropertyMap deserialize(com.mojang.authlib.properties.PropertyMap value) {
-    PropertyMap properties = new DefaultPropertyMap();
+    PropertyMap properties = this.propertyMapFactory.create(new HashMap<>());
 
     for (Map.Entry<String, com.mojang.authlib.properties.Property> entry : value.entries()) {
       properties.put(
               entry.getKey(),
-              new DefaultProperty(
+              this.propertyFactory.create(
                       entry.getValue().getName(),
                       entry.getValue().getValue(),
                       entry.getValue().getSignature()

@@ -18,14 +18,10 @@ import java.util.UUID;
 @Implement(value = NetworkPlayerInfoRegistry.class, version = "1.15.2")
 public class VersionedNetworkPlayerInfoRegistry implements NetworkPlayerInfoRegistry {
 
-    private final ClientPlayNetHandler connection;
     private final NetworkPlayerInfoSerializer<net.minecraft.client.network.play.NetworkPlayerInfo> networkPlayerInfoSerializer;
 
     @Inject
-    public VersionedNetworkPlayerInfoRegistry(
-            NetworkPlayerInfoSerializer networkPlayerInfoSerializer
-    ) {
-        this.connection = Minecraft.getInstance().getConnection();
+    public VersionedNetworkPlayerInfoRegistry(NetworkPlayerInfoSerializer networkPlayerInfoSerializer) {
         this.networkPlayerInfoSerializer = networkPlayerInfoSerializer;
     }
 
@@ -37,7 +33,7 @@ public class VersionedNetworkPlayerInfoRegistry implements NetworkPlayerInfoRegi
      */
     @Override
     public NetworkPlayerInfo getPlayerInfo(String username) {
-        return this.networkPlayerInfoSerializer.deserialize(this.connection.getPlayerInfo(username));
+        return this.networkPlayerInfoSerializer.deserialize(Minecraft.getInstance().getConnection().getPlayerInfo(username));
     }
 
     /**
@@ -48,7 +44,7 @@ public class VersionedNetworkPlayerInfoRegistry implements NetworkPlayerInfoRegi
      */
     @Override
     public NetworkPlayerInfo getPlayerInfo(UUID uniqueId) {
-        return this.networkPlayerInfoSerializer.deserialize(this.connection.getPlayerInfo(uniqueId));
+        return this.networkPlayerInfoSerializer.deserialize(Minecraft.getInstance().getConnection().getPlayerInfo(uniqueId));
     }
 
     /**
@@ -59,9 +55,8 @@ public class VersionedNetworkPlayerInfoRegistry implements NetworkPlayerInfoRegi
     @Override
     public Collection<NetworkPlayerInfo> getPlayerInfo() {
         Collection<NetworkPlayerInfo> collection = new ArrayList<>();
-        for (net.minecraft.client.network.play.NetworkPlayerInfo playerInfo : this.connection.getPlayerInfoMap()) {
+        for (net.minecraft.client.network.play.NetworkPlayerInfo playerInfo : Minecraft.getInstance().getConnection().getPlayerInfoMap()) {
             NetworkPlayerInfo networkPlayerInfo = this.networkPlayerInfoSerializer.deserialize(playerInfo);
-            System.out.println(networkPlayerInfo);
             collection.add(networkPlayerInfo);
         }
 
