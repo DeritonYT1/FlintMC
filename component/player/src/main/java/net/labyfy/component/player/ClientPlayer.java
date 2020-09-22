@@ -1,14 +1,7 @@
 package net.labyfy.component.player;
 
-import com.google.inject.assistedinject.Assisted;
-import net.labyfy.chat.MinecraftComponentMapper;
-import net.labyfy.component.inject.assisted.AssistedFactory;
 import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.player.overlay.TabOverlay;
-import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
-import net.labyfy.component.player.serializer.util.*;
-import net.labyfy.component.player.serializer.util.sound.SoundCategorySerializer;
-import net.labyfy.component.player.serializer.util.sound.SoundSerializer;
 
 import java.util.List;
 

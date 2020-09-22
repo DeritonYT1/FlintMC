@@ -1,7 +1,6 @@
 package net.labyfy.component.player;
 
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
 import net.labyfy.component.inject.assisted.AssistedFactory;
 import net.labyfy.component.player.util.SkinModel;
 import net.labyfy.component.resources.ResourceLocation;

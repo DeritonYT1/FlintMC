@@ -1,19 +1,11 @@
 package net.labyfy.component.player;
 
-import com.google.inject.assistedinject.Assisted;
-import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
-import net.labyfy.component.inject.assisted.AssistedFactory;
 import net.labyfy.component.player.gameprofile.GameProfile;
 import net.labyfy.component.player.network.NetworkPlayerInfo;
-import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
-import net.labyfy.component.player.serializer.util.*;
-import net.labyfy.component.player.serializer.util.sound.SoundCategorySerializer;
-import net.labyfy.component.player.serializer.util.sound.SoundSerializer;
 import net.labyfy.component.player.util.*;
 import net.labyfy.component.player.util.sound.Sound;
 import net.labyfy.component.player.util.sound.SoundCategory;
-import net.labyfy.component.player.world.ClientWorld;
 
 import java.util.UUID;
 
@@ -27,7 +19,7 @@ public interface Player extends CooldownTracking {
    *
    * @return The world of this player.
    */
-  ClientWorld getWorld();
+  Object getWorld();
 
   /**
    * Retrieves the game profile of this player.
@@ -930,7 +922,7 @@ public interface Player extends CooldownTracking {
    */
   // TODO: 05.09.2020 Replaces the Object to Scoreboard when the Scoreboard API is ready
   default Object getWorldScoreboard() {
-    return this.getWorld().getScoreboard();
+    return null;
   }
 
   /**
@@ -1085,13 +1077,11 @@ public interface Player extends CooldownTracking {
   /**
    * Whether block actions are restricted for this player.
    *
-   * @param clientWorld This world of this player
    * @param blockPos    This position of this block
    * @param gameMode    This game mode of this player
    * @return {@code true} if this player has restricted block actions, otherwise {@code false}
    */
-  // TODO: 06.09.2020 (Parameter 2) Replaces Object to BlockPos when the Block API is ready.
-  boolean blockActionRestricted(ClientWorld clientWorld, Object blockPos, GameMode gameMode);
+  boolean blockActionRestricted(Object blockPos, GameMode gameMode);
 
   /**
    * Spawns sweep particles.

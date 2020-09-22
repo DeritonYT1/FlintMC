@@ -5,7 +5,6 @@ import com.google.inject.assistedinject.AssistedInject;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
-import net.labyfy.component.inject.primitive.InjectionHolder;
 import net.labyfy.component.player.PlayerSkinProfile;
 import net.labyfy.component.player.RemoteClientPlayer;
 import net.labyfy.component.player.gameprofile.GameProfile;
@@ -20,8 +19,8 @@ import net.labyfy.component.player.util.Hand;
 import net.labyfy.component.player.util.PlayerClothing;
 import net.labyfy.component.player.util.sound.Sound;
 import net.labyfy.component.player.util.sound.SoundCategory;
-import net.labyfy.component.player.world.ClientWorld;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
@@ -235,9 +234,9 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    * @return The world of this player.
    */
   @Override
-  public ClientWorld getWorld() {
+  public Object getWorld() {
     // TODO: 18.09.2020 See Issue #177
-    return InjectionHolder.getInjectedInstance(ClientWorld.class);
+    return null;
   }
 
   /**
@@ -322,7 +321,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    */
   @Override
   public long getPlayerTime() {
-    return this.getWorld().getTime();
+    return 0L;
   }
 
   /**
@@ -1564,15 +1563,14 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   /**
    * Whether block actions are restricted for this player.
    *
-   * @param clientWorld This world of this player
    * @param blockPos    This position of this block
    * @param gameMode    This game mode of this player
    * @return {@code true} if this player has restricted block actions, otherwise {@code false}
    */
   @Override
-  public boolean blockActionRestricted(ClientWorld clientWorld, Object blockPos, GameMode gameMode) {
+  public boolean blockActionRestricted(Object blockPos, GameMode gameMode) {
     return this.player.blockActionRestricted(
-            (net.minecraft.world.World) this.getWorld().getClientWorld(),
+            Minecraft.getInstance().world,
             (BlockPos) blockPos,
             this.gameModeSerializer.serialize(gameMode)
     );
