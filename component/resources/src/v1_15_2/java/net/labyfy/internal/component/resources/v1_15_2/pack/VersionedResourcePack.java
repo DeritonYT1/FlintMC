@@ -1,6 +1,5 @@
 package net.labyfy.internal.component.resources.v1_15_2.pack;
 
-import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.resources.ResourceLocation;
 import net.labyfy.component.resources.pack.ResourcePack;
 import net.minecraft.client.resources.ClientResourcePackInfo;
@@ -13,16 +12,15 @@ import java.util.Collection;
 /**
  * 1.15.2 implementation of a labyfy resource pack
  */
-@Implement(value = ResourceLocation.class, version = "1.15.2")
-public class DefaultResourcePack implements ResourcePack {
+public class VersionedResourcePack implements ResourcePack {
   private final ClientResourcePackInfo info;
 
   /**
-   * Constructs a new {@link DefaultResourcePack} based on the given info.
+   * Constructs a new {@link VersionedResourcePack} based on the given info.
    *
    * @param info Information about the resource pack
    */
-  DefaultResourcePack(ClientResourcePackInfo info) {
+  VersionedResourcePack(ClientResourcePackInfo info) {
     this.info = info;
   }
 

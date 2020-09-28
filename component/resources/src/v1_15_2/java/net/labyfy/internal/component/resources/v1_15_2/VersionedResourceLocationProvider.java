@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
  */
 @Singleton
 @Implement(value = ResourceLocationProvider.class, version = "1.15.2")
-public class DefaultResourceLocationProvider implements ResourceLocationProvider {
+public class VersionedResourceLocationProvider implements ResourceLocationProvider {
 
-  private final DefaultResourceLocation.Factory resourceLocationFactory;
+  private final VersionedResourceLocation.Factory resourceLocationFactory;
 
   @Inject
-  private DefaultResourceLocationProvider(ResourceLocation.Factory resourceLocationFactory) {
+  private VersionedResourceLocationProvider(ResourceLocation.Factory resourceLocationFactory) {
     this.resourceLocationFactory = resourceLocationFactory;
   }
 

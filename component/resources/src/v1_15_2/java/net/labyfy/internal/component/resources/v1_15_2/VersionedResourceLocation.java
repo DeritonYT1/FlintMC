@@ -13,14 +13,14 @@ import java.io.InputStream;
  * 1.15.2 implementation of a minecraft resource location.
  */
 @Implement(value = ResourceLocation.class, version = "1.15.2")
-public class DefaultResourceLocation extends net.minecraft.util.ResourceLocation implements ResourceLocation {
+public class VersionedResourceLocation extends net.minecraft.util.ResourceLocation implements ResourceLocation {
   @AssistedInject
-  private DefaultResourceLocation(@Assisted("fullPath") String fullPath) {
+  private VersionedResourceLocation(@Assisted("fullPath") String fullPath) {
     super(fullPath);
   }
 
   @AssistedInject
-  private DefaultResourceLocation(
+  private VersionedResourceLocation(
       @Assisted("nameSpace") String nameSpace, @Assisted("path") String path) {
     super(nameSpace, path);
   }
