@@ -28,7 +28,7 @@ publish_labyfy_prerel_snapshot:
       -Partifactory_contextUrl=$artifactory_contextUrl
       -Partifactory_password=$artifactory_password
       -Partifactory_user=$artifactory_user
-      artifactoryPublish --stacktrace
+      publish --stacktrace
   environment:
     name: development
   only:
