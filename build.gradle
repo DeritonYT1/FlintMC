@@ -20,6 +20,9 @@ buildscript {
 
     repositories {
         maven {
+            url = System.getenv().getOrDefault("artifactory_contextUrl", project.getProperties().get("artifactory_contextUrl").toString()) + "general/"
+        }
+        maven {
             url "https://git.laby.tech/api/v4/groups/client/-/packages/maven"
             name "GitLab"
             credentials(HttpHeaderCredentials) {
@@ -69,6 +72,9 @@ allprojects {
     version fixedVersion
     buildscript {
         repositories {
+            maven {
+                url = System.getenv().getOrDefault("artifactory_contextUrl", project.getProperties().get("artifactory_contextUrl").toString()) + "general/"
+            }
             maven {
                 url "https://git.laby.tech/api/v4/groups/client/-/packages/maven"
                 name "GitLab"
