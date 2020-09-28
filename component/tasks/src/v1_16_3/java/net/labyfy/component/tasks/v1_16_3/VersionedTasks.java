@@ -48,7 +48,7 @@ public class VersionedTasks {
     );
   }
 
-  public static void notify(String task) throws TaskExecutionException {
+  public static void notify(Tasks task) throws TaskExecutionException {
     InjectionHolder.getInjectedInstance(TaskExecutor.class).execute(task);
   }
 }

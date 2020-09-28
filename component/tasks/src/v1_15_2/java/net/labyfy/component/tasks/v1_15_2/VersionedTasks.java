@@ -16,12 +16,12 @@ import javax.inject.Singleton;
 
 @Singleton
 @AutoLoad
-public class DefaultTasks {
+public class VersionedTasks {
 
   private final ClassMappingProvider classMappingProvider;
 
   @Inject
-  private DefaultTasks(ClassMappingProvider classMappingProvider) {
+  private VersionedTasks(ClassMappingProvider classMappingProvider) {
     this.classMappingProvider = classMappingProvider;
   }
 
