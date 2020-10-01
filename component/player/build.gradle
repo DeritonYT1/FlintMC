@@ -26,9 +26,9 @@ dependencies {
     api project(':component:resources')
     api project(':component:tasks')
     api project(':component:transform:hook')
+    api project(':component:transform:shadow')
     api project(':component:chat')
     api project(':component:items')
-    api project(':component:world')
 
     api "com.google.code.gson:gson:2.8.6"
 }

@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
+import net.labyfy.component.items.inventory.InventoryController;
 import net.labyfy.component.items.inventory.player.PlayerInventory;
 import net.labyfy.component.items.mapper.MinecraftItemMapper;
 import net.labyfy.component.player.ClientPlayer;
@@ -76,7 +77,8 @@ public class VersionedClientPlayer implements ClientPlayer {
   private final MinecraftItemMapper minecraftItemMapper;
 
   private final ClientWorld clientWorld;
-  private final PlayerInventory playerInventory;
+
+  private final InventoryController inventoryController;
 
   private NetworkPlayerInfo networkPlayerInfo;
 
@@ -93,7 +95,9 @@ public class VersionedClientPlayer implements ClientPlayer {
           SoundCategorySerializer soundCategorySerializer,
           SoundSerializer soundSerializer,
           TabOverlay tabOverlay,
-          MinecraftItemMapper minecraftItemMapper, ClientWorld clientWorld, PlayerInventory playerInventory) {
+          MinecraftItemMapper minecraftItemMapper,
+          ClientWorld clientWorld,
+          InventoryController inventoryController) {
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
     this.gameModeSerializer = gameModeSerializer;
@@ -107,7 +111,7 @@ public class VersionedClientPlayer implements ClientPlayer {
     this.tabOverlay = tabOverlay;
     this.minecraftItemMapper = minecraftItemMapper;
     this.clientWorld = clientWorld;
-    this.playerInventory = playerInventory;
+    this.inventoryController = inventoryController;
   }
 
   /**
@@ -117,7 +121,7 @@ public class VersionedClientPlayer implements ClientPlayer {
    */
   @Override
   public PlayerInventory getPlayerInventory() {
-    return this.playerInventory;
+    return this.inventoryController.getPlayerInventory();
   }
 
   /**

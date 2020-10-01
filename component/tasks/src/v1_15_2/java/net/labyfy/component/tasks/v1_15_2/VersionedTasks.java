@@ -31,7 +31,7 @@ public class VersionedTasks {
         .getCtClass()
         .getDeclaredConstructors()[0]
         .insertAfter(
-            "net.labyfy.component.tasks.v1_15_2.DefaultTasks.notify(net.labyfy.component.tasks.Tasks.POST_MINECRAFT_INITIALIZE);");
+            "net.labyfy.component.tasks.v1_15_2.VersionedTasks.notify(net.labyfy.component.tasks.Tasks.POST_MINECRAFT_INITIALIZE);");
   }
 
   @ClassTransform(value = "net.minecraft.client.MainWindow", version = "1.15.2")
@@ -45,7 +45,7 @@ public class VersionedTasks {
                 .getMethod("setLogOnGlError")
                 .getName())
         .insertAfter(
-            "net.labyfy.component.tasks.v1_15_2.DefaultTasks.notify(net.labyfy.component.tasks.Tasks.POST_OPEN_GL_INITIALIZE);");
+            "net.labyfy.component.tasks.v1_15_2.VersionedTasks.notify(net.labyfy.component.tasks.Tasks.POST_OPEN_GL_INITIALIZE);");
   }
 
   public static void notify(Tasks task) throws TaskExecutionException {

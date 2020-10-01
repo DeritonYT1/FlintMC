@@ -1,6 +1,7 @@
 package net.labyfy.chat.v1_16_3;
 
 import com.google.inject.Inject;
+import net.labyfy.chat.builder.ComponentBuilder;
 import net.labyfy.chat.serializer.ComponentSerializer;
 import net.labyfy.chat.serializer.DefaultComponentSerializerFactory;
 import net.labyfy.component.inject.implement.Implement;
@@ -13,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 public class VersionedComponentSerializerFactory extends DefaultComponentSerializerFactory {
 
   @Inject
-  public VersionedComponentSerializerFactory(Logger logger) {
-    super(logger, false); // The legacy hover is disabled for every version above 1.16
+  public VersionedComponentSerializerFactory(Logger logger, ComponentBuilder.Factory componentFactory) {
+    super(logger, componentFactory, false); // The legacy hover is disabled for every version above 1.16
   }
 }

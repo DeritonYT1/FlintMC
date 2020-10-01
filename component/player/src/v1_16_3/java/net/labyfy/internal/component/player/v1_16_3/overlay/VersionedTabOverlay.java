@@ -6,6 +6,7 @@ import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.mappings.ClassMappingProvider;
 import net.labyfy.component.player.overlay.TabOverlay;
+import net.labyfy.component.player.overlay.TabOverlayAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.ITextComponent;
 
@@ -28,20 +29,20 @@ public class VersionedTabOverlay implements TabOverlay {
   }
 
   /**
-   * {@inheritDoc}
+   * Retrieves the header of this player.
+   *
+   * @return The header of this player
    */
   @Override
-  public ChatComponent getHeader() throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
-    return this.minecraftComponentMapper.fromMinecraft(
-            this.classMappingProvider
-                    .get("net.minecraft.client.gui.overlay.PlayerTabOverlayGui")
-                    .getField("header")
-                    .getValue(Minecraft.getInstance().ingameGUI.getTabList())
-    );
+  public ChatComponent getHeader() {
+    TabOverlayAccessor tabOverlayAccessor = (TabOverlayAccessor) Minecraft.getInstance().ingameGUI.getTabList();
+    return this.minecraftComponentMapper.fromMinecraft(tabOverlayAccessor.getHeader());
   }
 
   /**
-   * {@inheritDoc}
+   * Updates the header of this player.
+   *
+   * @param header The new header content
    */
   @Override
   public void updateHeader(ChatComponent header) {
@@ -51,20 +52,20 @@ public class VersionedTabOverlay implements TabOverlay {
   }
 
   /**
-   * {@inheritDoc}
+   * Retrieves the footer of this player.
+   *
+   * @return The footer of this player.
    */
   @Override
-  public ChatComponent getFooter() throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
-    return this.minecraftComponentMapper.fromMinecraft(
-            this.classMappingProvider
-                    .get("net.minecraft.client.gui.overlay.PlayerTabOverlayGui")
-                    .getField("footer")
-                    .getValue(Minecraft.getInstance().ingameGUI.getTabList())
-    );
+  public ChatComponent getFooter() {
+    TabOverlayAccessor tabOverlayAccessor = (TabOverlayAccessor) Minecraft.getInstance().ingameGUI.getTabList();
+    return this.minecraftComponentMapper.fromMinecraft(tabOverlayAccessor.getFooter());
   }
 
   /**
-   * {@inheritDoc}
+   * Updates the footer of this player.
+   *
+   * @param footer The new footer content
    */
   @Override
   public void updateFooter(ChatComponent footer) {

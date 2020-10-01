@@ -326,23 +326,19 @@ public class VersionedMinecraftComponentMapper implements MinecraftComponentMapp
       );
     }
 
-    if (style.getHoverEvent() != null) {
-      HoverEvent.Action action = HoverEvent.Action.valueOf(style.getHoverEvent().getAction().getCanonicalName().toUpperCase());
-      ITextComponent component = style.getHoverEvent().getParameter(net.minecraft.util.text.event.HoverEvent.Action.SHOW_TEXT);
+    if (result.hoverEvent() != null && result.hoverEvent().getContents().length > 0) {
+      net.minecraft.util.text.event.HoverEvent.Action action = null;
+      HoverContent content = result.hoverEvent().getContents()[0];
 
-      if (component != null) {
-        HoverContent content = action == HoverEvent.Action.SHOW_TEXT || action == HoverEvent.Action.SHOW_ACHIEVEMENT ?
-                new HoverText(this.fromMinecraft(component)) :
-                this.factory.gson()
-                        .getGson()
-                        .fromJson(
-                                JsonParser.parseString(component.getUnformattedComponentText()),
-                                action.getContentClass()
-                        );
+      try {
+        action = net.minecraft.util.text.event.HoverEvent.Action.getValueByCanonicalName(content.getAction().getLowerName());
+      } catch (IllegalArgumentException ignored) {
+      }
 
-        if (content != null) {
-          result.hoverEvent(HoverEvent.of(content));
-        }
+      if (action != null) {
+        ChatComponent value = this.factory.gson().serializeHoverContent(content);
+
+        style.setHoverEvent(new net.minecraft.util.text.event.HoverEvent(action, this.toMinecraft(value)));
       }
     }
 
