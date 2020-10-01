@@ -19,6 +19,7 @@ import net.labyfy.component.player.util.Hand;
 import net.labyfy.component.player.util.PlayerClothing;
 import net.labyfy.component.player.util.sound.Sound;
 import net.labyfy.component.player.util.sound.SoundCategory;
+import net.labyfy.component.world.ClientWorld;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
@@ -57,6 +58,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   private final SoundCategorySerializer<net.minecraft.util.SoundCategory> soundCategorySerializer;
   private final SoundSerializer<SoundEvent> soundSerializer;
 
+  private final ClientWorld clientWorld;
+
   private NetworkPlayerInfo networkPlayerInfo;
   private RemoteClientPlayerEntity player;
 
@@ -72,8 +75,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
           @Assisted("playerClothingSerializer") PlayerClothingSerializer playerClothingSerializer,
           @Assisted("poseSerializer") PoseSerializer poseSerializer,
           @Assisted("soundCategorySerializer") SoundCategorySerializer soundCategorySerializer,
-          @Assisted("soundSerializer") SoundSerializer soundSerializer
-  ) {
+          @Assisted("soundSerializer") SoundSerializer soundSerializer,
+          @Assisted("world") ClientWorld clientWorld) {
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
     this.gameModeSerializer = gameModeSerializer;
@@ -84,6 +87,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
     this.poseSerializer = poseSerializer;
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
+    this.clientWorld = clientWorld;
 
     if (!(player instanceof RemoteClientPlayerEntity)) {
       throw new IllegalArgumentException();
@@ -234,9 +238,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    * @return The world of this player.
    */
   @Override
-  public Object getWorld() {
-    // TODO: 18.09.2020 See Issue #177
-    return null;
+  public ClientWorld getWorld() {
+    return this.clientWorld;
   }
 
   /**
@@ -321,7 +324,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    */
   @Override
   public long getPlayerTime() {
-    return 0L;
+    return this.clientWorld.getDayTime();
   }
 
   /**

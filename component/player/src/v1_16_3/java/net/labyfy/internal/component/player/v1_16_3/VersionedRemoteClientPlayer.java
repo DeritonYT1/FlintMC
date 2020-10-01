@@ -5,7 +5,6 @@ import com.google.inject.assistedinject.AssistedInject;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
-import net.labyfy.component.inject.primitive.InjectionHolder;
 import net.labyfy.component.player.PlayerSkinProfile;
 import net.labyfy.component.player.RemoteClientPlayer;
 import net.labyfy.component.player.gameprofile.GameProfile;
@@ -20,6 +19,7 @@ import net.labyfy.component.player.util.Hand;
 import net.labyfy.component.player.util.PlayerClothing;
 import net.labyfy.component.player.util.sound.Sound;
 import net.labyfy.component.player.util.sound.SoundCategory;
+import net.labyfy.component.world.ClientWorld;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
@@ -59,6 +59,9 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   private final SoundCategorySerializer<net.minecraft.util.SoundCategory> soundCategorySerializer;
   private final SoundSerializer<SoundEvent> soundSerializer;
 
+  private final ClientWorld clientWorld;
+
+
   private NetworkPlayerInfo networkPlayerInfo;
   private RemoteClientPlayerEntity player;
 
@@ -74,8 +77,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
           @Assisted("playerClothingSerializer") PlayerClothingSerializer playerClothingSerializer,
           @Assisted("poseSerializer") PoseSerializer poseSerializer,
           @Assisted("soundCategorySerializer") SoundCategorySerializer soundCategorySerializer,
-          @Assisted("soundSerializer") SoundSerializer soundSerializer
-  ) {
+          @Assisted("soundSerializer") SoundSerializer soundSerializer,
+          @Assisted("world") ClientWorld clientWorld) {
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
     this.gameModeSerializer = gameModeSerializer;
@@ -86,6 +89,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
     this.poseSerializer = poseSerializer;
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
+    this.clientWorld = clientWorld;
 
     if (!(player instanceof RemoteClientPlayerEntity)) {
       throw new IllegalArgumentException();
@@ -236,9 +240,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    * @return The world of this player.
    */
   @Override
-  public Object getWorld() {
-    // TODO: 18.09.2020 See Issue #177
-    return null;
+  public ClientWorld getWorld() {
+    return this.clientWorld;
   }
 
   /**
@@ -327,8 +330,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    */
   @Override
   public long getPlayerTime() {
-    // TODO: 22.09.2020 World day time
-    return 0L;
+    return this.clientWorld.getDayTime();
   }
 
   /**
@@ -743,16 +745,6 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   }
 
   /**
-   * Sets the absorption amount of this player.
-   *
-   * @param amount The new absorption amount.
-   */
-  @Override
-  public void setAbsorptionAmount(float amount) {
-    this.player.setAbsorptionAmount(amount);
-  }
-
-  /**
    * Retrieves the absorption amount of this player.
    *
    * @return Theabsorption amount of this player.
@@ -760,6 +752,16 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   @Override
   public float getAbsorptionAmount() {
     return this.player.getAbsorptionAmount();
+  }
+
+  /**
+   * Sets the absorption amount of this player.
+   *
+   * @param amount The new absorption amount.
+   */
+  @Override
+  public void setAbsorptionAmount(float amount) {
+    this.player.setAbsorptionAmount(amount);
   }
 
   /**
@@ -1573,8 +1575,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   /**
    * Whether block actions are restricted for this player.
    *
-   * @param blockPos    This position of this block
-   * @param gameMode    This game mode of this player
+   * @param blockPos This position of this block
+   * @param gameMode This game mode of this player
    * @return {@code true} if this player has restricted block actions, otherwise {@code false}
    */
   @Override

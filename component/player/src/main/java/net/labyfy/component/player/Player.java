@@ -6,6 +6,8 @@ import net.labyfy.component.player.network.NetworkPlayerInfo;
 import net.labyfy.component.player.util.*;
 import net.labyfy.component.player.util.sound.Sound;
 import net.labyfy.component.player.util.sound.SoundCategory;
+import net.labyfy.component.world.ClientWorld;
+import net.labyfy.component.world.scoreboad.Scoreboard;
 
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ public interface Player extends CooldownTracking {
    *
    * @return The world of this player.
    */
-  Object getWorld();
+  ClientWorld getWorld();
 
   /**
    * Retrieves the game profile of this player.
@@ -920,9 +922,8 @@ public interface Player extends CooldownTracking {
    *
    * @return The world scoreboard of this player.
    */
-  // TODO: 05.09.2020 Replaces the Object to Scoreboard when the Scoreboard API is ready
-  default Object getWorldScoreboard() {
-    return null;
+  default Scoreboard getWorldScoreboard() {
+    return this.getWorld().getScoreboard();
   }
 
   /**

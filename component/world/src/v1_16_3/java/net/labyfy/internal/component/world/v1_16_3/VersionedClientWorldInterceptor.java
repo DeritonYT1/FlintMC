@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import net.labyfy.component.player.ClientPlayer;
+import net.labyfy.component.player.RemoteClientPlayer;
 import net.labyfy.component.processing.autoload.AutoLoad;
 import net.labyfy.component.stereotype.type.Type;
 import net.labyfy.component.transform.hook.Hook;
@@ -22,14 +23,17 @@ public class VersionedClientWorldInterceptor {
 
   private final ClientPlayer clientPlayer;
   private final ClientWorld clientWorld;
+  private final RemoteClientPlayer.Provider remoteClientPlayerProvider;
 
   @Inject
   private VersionedClientWorldInterceptor(
           ClientPlayer clientPlayer,
-          ClientWorld clientWorld
+          ClientWorld clientWorld,
+          RemoteClientPlayer.Provider remoteClientPlayerProvider
   ) {
     this.clientPlayer = clientPlayer;
     this.clientWorld = clientWorld;
+    this.remoteClientPlayerProvider = remoteClientPlayerProvider;
   }
 
   @Hook(
@@ -46,8 +50,7 @@ public class VersionedClientWorldInterceptor {
     if (playerEntity instanceof ClientPlayerEntity) {
       this.clientWorld.addPlayer(this.clientPlayer);
     } else if (playerEntity instanceof RemoteClientPlayerEntity) {
-      // TODO: 21.09.2020 Wait for merge (#135-implement-1-16)
-      this.clientWorld.addPlayer(null);
+      this.clientWorld.addPlayer(this.remoteClientPlayerProvider.get(playerEntity));
     }
 
   }

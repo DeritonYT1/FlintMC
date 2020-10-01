@@ -11,6 +11,7 @@ import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
 import net.labyfy.component.player.serializer.util.*;
 import net.labyfy.component.player.serializer.util.sound.SoundCategorySerializer;
 import net.labyfy.component.player.serializer.util.sound.SoundSerializer;
+import net.labyfy.component.world.ClientWorld;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.util.Hand;
@@ -38,6 +39,8 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
   private final SoundCategorySerializer<SoundCategory> soundCategorySerializer;
   private final SoundSerializer<SoundEvent> soundSerializer;
 
+  private final ClientWorld clientWorld;
+
   @Inject
   public VersionedRemoteClientPlayerProvider(
           RemoteClientPlayer.Factory remoteClientPlayerFactory,
@@ -50,8 +53,8 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
           PlayerClothingSerializer playerClothingSerializer,
           PoseSerializer poseSerializer,
           SoundCategorySerializer soundCategorySerializer,
-          SoundSerializer soundSerializer
-  ) {
+          SoundSerializer soundSerializer,
+          ClientWorld clientWorld) {
     this.remoteClientPlayerFactory = remoteClientPlayerFactory;
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
@@ -63,6 +66,7 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
     this.poseSerializer = poseSerializer;
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
+    this.clientWorld = clientWorld;
   }
 
   /**
@@ -81,7 +85,8 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
             this.playerClothingSerializer,
             this.poseSerializer,
             this.soundCategorySerializer,
-            this.soundSerializer
+            this.soundSerializer,
+            this.clientWorld
     );
   }
 }

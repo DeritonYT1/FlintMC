@@ -1,6 +1,7 @@
 package net.labyfy.component.player;
 
 import net.labyfy.component.inject.implement.Implement;
+import net.labyfy.component.items.inventory.player.PlayerInventory;
 import net.labyfy.component.player.overlay.TabOverlay;
 
 import java.util.List;
@@ -16,8 +17,7 @@ public interface ClientPlayer extends Player {
    *
    * @return The inventory of this player
    */
-  // TODO: 07.09.2020 Replaces the Object to PlayerInventory when the Inventory API is ready
-  Object getPlayerInventory();
+  PlayerInventory getPlayerInventory();
 
   /**
    * Retrieves the armor contents of this player.

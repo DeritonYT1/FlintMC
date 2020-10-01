@@ -8,6 +8,7 @@ import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
 import net.labyfy.component.player.serializer.util.*;
 import net.labyfy.component.player.serializer.util.sound.SoundCategorySerializer;
 import net.labyfy.component.player.serializer.util.sound.SoundSerializer;
+import net.labyfy.component.world.ClientWorld;
 
 /**
  * Represents a remote client player
@@ -47,7 +48,8 @@ public interface RemoteClientPlayer extends Player {
             @Assisted("playerClothingSerializer") PlayerClothingSerializer playerClothingSerializer,
             @Assisted("poseSerializer") PoseSerializer poseSerializer,
             @Assisted("soundCategorySerializer") SoundCategorySerializer soundCategorySerializer,
-            @Assisted("soundSerializer") SoundSerializer soundSerializer
+            @Assisted("soundSerializer") SoundSerializer soundSerializer,
+            @Assisted("world") ClientWorld clientWorld
     );
 
   }

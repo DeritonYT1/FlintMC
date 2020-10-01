@@ -6,7 +6,7 @@ import io.netty.buffer.Unpooled;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
-import net.labyfy.component.inject.primitive.InjectionHolder;
+import net.labyfy.component.items.inventory.player.PlayerInventory;
 import net.labyfy.component.player.ClientPlayer;
 import net.labyfy.component.player.PlayerSkinProfile;
 import net.labyfy.component.player.gameprofile.GameProfile;
@@ -22,6 +22,7 @@ import net.labyfy.component.player.util.Hand;
 import net.labyfy.component.player.util.PlayerClothing;
 import net.labyfy.component.player.util.sound.Sound;
 import net.labyfy.component.player.util.sound.SoundCategory;
+import net.labyfy.component.world.ClientWorld;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -71,6 +72,9 @@ public class VersionedClientPlayer implements ClientPlayer {
   private final SoundSerializer<SoundEvent> soundSerializer;
   private final TabOverlay tabOverlay;
 
+  private final ClientWorld clientWorld;
+  private final PlayerInventory playerInventory;
+
   private NetworkPlayerInfo networkPlayerInfo;
 
   @Inject
@@ -85,8 +89,8 @@ public class VersionedClientPlayer implements ClientPlayer {
           PoseSerializer poseSerializer,
           SoundCategorySerializer soundCategorySerializer,
           SoundSerializer soundSerializer,
-          TabOverlay tabOverlay
-  ) {
+          TabOverlay tabOverlay,
+          ClientWorld clientWorld, PlayerInventory playerInventory) {
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
     this.gameModeSerializer = gameModeSerializer;
@@ -98,6 +102,8 @@ public class VersionedClientPlayer implements ClientPlayer {
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
     this.tabOverlay = tabOverlay;
+    this.clientWorld = clientWorld;
+    this.playerInventory = playerInventory;
   }
 
   /**
@@ -106,8 +112,8 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @return The inventory of this player
    */
   @Override
-  public Object getPlayerInventory() {
-    return Minecraft.getInstance().player.inventory;
+  public PlayerInventory getPlayerInventory() {
+    return this.playerInventory;
   }
 
   /**
@@ -614,9 +620,8 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @return The world of this player.
    */
   @Override
-  public Object getWorld() {
-    // TODO: 18.09.2020 See Issue #177
-    return null;
+  public ClientWorld getWorld() {
+    return this.clientWorld;
   }
 
   /**
@@ -701,8 +706,7 @@ public class VersionedClientPlayer implements ClientPlayer {
    */
   @Override
   public long getPlayerTime() {
-    // TODO: 22.09.2020  World day time
-    return 0L;
+    return this.clientWorld.getDayTime();
   }
 
   /**
