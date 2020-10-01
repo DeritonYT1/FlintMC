@@ -5,6 +5,7 @@ import com.google.inject.assistedinject.AssistedInject;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
+import net.labyfy.component.items.mapper.MinecraftItemMapper;
 import net.labyfy.component.player.PlayerSkinProfile;
 import net.labyfy.component.player.RemoteClientPlayer;
 import net.labyfy.component.player.gameprofile.GameProfile;
@@ -59,6 +60,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   private final SoundCategorySerializer<net.minecraft.util.SoundCategory> soundCategorySerializer;
   private final SoundSerializer<SoundEvent> soundSerializer;
 
+  private final MinecraftItemMapper minecraftItemMapper;
   private final ClientWorld clientWorld;
 
 
@@ -78,7 +80,9 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
           @Assisted("poseSerializer") PoseSerializer poseSerializer,
           @Assisted("soundCategorySerializer") SoundCategorySerializer soundCategorySerializer,
           @Assisted("soundSerializer") SoundSerializer soundSerializer,
-          @Assisted("world") ClientWorld clientWorld) {
+          @Assisted("itemMapper") MinecraftItemMapper minecraftItemMapper,
+          @Assisted("world") ClientWorld clientWorld
+  ) {
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
     this.gameModeSerializer = gameModeSerializer;
@@ -89,6 +93,7 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
     this.poseSerializer = poseSerializer;
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
+    this.minecraftItemMapper = minecraftItemMapper;
     this.clientWorld = clientWorld;
 
     if (!(player instanceof RemoteClientPlayerEntity)) {
@@ -118,119 +123,6 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
     this.player.sendStatusMessage(
             (ITextComponent) this.minecraftComponentMapper.toMinecraft(component),
             actionBar
-    );
-  }
-
-  /**
-   * Opens a sign editor.
-   *
-   * @param signTileEntity The sign to be edited.
-   */
-  @Override
-  public void openSignEditor(Object signTileEntity) {
-    this.player.openSignEditor((SignTileEntity) signTileEntity);
-  }
-
-  /**
-   * Opens a minecart command block.
-   *
-   * @param commandBlock The minecart command block to be opened.
-   */
-  @Override
-  public void openMinecartCommandBlock(Object commandBlock) {
-    this.player.openMinecartCommandBlock((CommandBlockLogic) commandBlock);
-  }
-
-  /**
-   * Opens a command block.
-   *
-   * @param commandBlock The command block to be opened.
-   */
-  @Override
-  public void openCommandBlock(Object commandBlock) {
-    this.player.openCommandBlock((CommandBlockTileEntity) commandBlock);
-  }
-
-  /**
-   * Opens a structure block.
-   *
-   * @param structureBlock The structure block to be opened.
-   */
-  @Override
-  public void openStructureBlock(Object structureBlock) {
-    this.player.openStructureBlock((StructureBlockTileEntity) structureBlock);
-  }
-
-  /**
-   * Opens a jigsaw.
-   *
-   * @param jigsaw The jigsaw to be opened.
-   */
-  @Override
-  public void openJigsaw(Object jigsaw) {
-    this.player.openJigsaw((JigsawTileEntity) jigsaw);
-  }
-
-  /**
-   * Opens a book.
-   *
-   * @param itemStack The item stack which should be a book.
-   * @param hand      The hand of this player.
-   */
-  @Override
-  public void openBook(Object itemStack, Hand hand) {
-    this.player.openBook((ItemStack) itemStack, this.handSerializer.serialize(hand));
-  }
-
-  /**
-   * Opens a horse inventory
-   *
-   * @param horse     The horse that has an inventory
-   * @param inventory Inventory of the horse
-   */
-  @Override
-  public void openHorseInventory(Object horse, Object inventory) {
-    this.player.openHorseInventory(
-            (AbstractHorseEntity) horse,
-            (IInventory) inventory
-    );
-  }
-
-  /**
-   * Opens a merchant inventory.
-   *
-   * @param merchantOffers  The offers of the merchant
-   * @param container       The container identifier for this merchant
-   * @param levelProgress   The level progress of this merchant.<br>
-   *                        <b>Note:</b><br>
-   *                        1 = Novice<br>
-   *                        2 = Apprentice<br>
-   *                        3 = Journeyman<br>
-   *                        4 = Expert<br>
-   *                        5 = Master
-   * @param experience      The total experience for this villager (Always 0 for the wandering trader)
-   * @param regularVillager {@code True} if this is a regular villager,
-   *                        otherwise {@code false} for the wandering trader. When {@code false},
-   *                        hides the villager level  and some other GUI elements
-   * @param refreshable     {@code True} for regular villagers and {@code false} for the wandering trader.
-   *                        If {@code true}, the "Villagers restock up to two times per day".
-   */
-  @Override
-  public void openMerchantInventory(
-          Object merchantOffers,
-          int container,
-          int levelProgress,
-          int experience,
-          boolean regularVillager,
-          boolean refreshable
-  ) {
-    this.player.openMerchantContainer(
-            container,
-            (MerchantOffers) merchantOffers,
-            levelProgress,
-            experience,
-            regularVillager,
-            refreshable
     );
   }
 
@@ -505,8 +397,8 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
    */
   // TODO: 04.09.2020 Replaces the Object to ItemStack when the (Item API?) is ready
   @Override
-  public Object getActiveItemStack() {
-    return this.player.getActiveItemStack();
+  public net.labyfy.component.items.ItemStack getActiveItemStack() {
+    return this.minecraftItemMapper.fromMinecraft(this.player.getActiveItemStack());
   }
 
   /**
@@ -1353,43 +1245,6 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   }
 
   /**
-   * Whether the selected item can be dropped.
-   *
-   * @param dropEntireStack Whether the entire stack can be dropped.
-   * @return {@code true} if the selected item can be dropped, otherwise {@code false}
-   */
-  @Override
-  public boolean drop(boolean dropEntireStack) {
-    return this.player.drop(dropEntireStack);
-  }
-
-  /**
-   * Retrieves the dropped item as an entity.
-   *
-   * @param droppedItem The dropped item
-   * @param traceItem   Whether the item can be traced.
-   * @return The dropped item as an entity, or {@code null}
-   */
-  @Override
-  public Object dropItem(Object droppedItem, boolean traceItem) {
-    return this.player.dropItem((ItemStack) droppedItem, traceItem);
-  }
-
-  /**
-   * Retrieves the dropped item as an entity.
-   *
-   * @param droppedItem The dropped item
-   * @param dropAround  If {@code true}, the item will be thrown in a random direction
-   *                    from the entity regardless of which direction the entity is facing
-   * @param traceItem   Whether the item can be traced.
-   * @return The dropped item as an entity, or {@code null}
-   */
-  @Override
-  public Object dropItem(Object droppedItem, boolean dropAround, boolean traceItem) {
-    return this.player.dropItem((ItemStack) droppedItem, dropAround, traceItem);
-  }
-
-  /**
    * Retrieves the digging speed of the given block state for this player.
    *
    * @param blockState The block state that is to receive the dig speed.
@@ -1429,28 +1284,6 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   @Override
   public void writeAdditional(Object compoundNBT) {
     this.player.writeAdditional((CompoundNBT) compoundNBT);
-  }
-
-  /**
-   * Finds shootable items in the inventory of this player.
-   *
-   * @param shootable The item to be fired.
-   * @return An item to be fired or an empty item.
-   */
-  @Override
-  public Object findAmmo(Object shootable) {
-    return this.player.findAmmo((ItemStack) shootable);
-  }
-
-  /**
-   * Whether the player can pick up the item.
-   *
-   * @param itemStack The item to be pick up
-   * @return {@code true} if the player can pick up the item, otherwise {@code false}
-   */
-  @Override
-  public boolean canPickUpItem(Object itemStack) {
-    return this.player.canPickUpItem((ItemStack) itemStack);
   }
 
   /**
@@ -1625,106 +1458,6 @@ public class VersionedRemoteClientPlayer implements RemoteClientPlayer {
   @Override
   public void enchantItem(Object itemStack, int cost) {
     this.player.onEnchant((ItemStack) itemStack, cost);
-  }
-
-  /**
-   * Retrieves the opened container of this player.
-   *
-   * @return The opened container of this player.
-   */
-  @Override
-  public Object getOpenedContainer() {
-    return this.player.openContainer;
-  }
-
-  /**
-   * Retrieves the opened container of this player.
-   *
-   * @return The opened container of this player.
-   */
-  @Override
-  public Object getPlayerContainer() {
-    return this.player.container;
-  }
-
-  /**
-   * Retrieves the previous camera yaw of this player.
-   *
-   * @return The previous camera yaw of this player.
-   */
-  @Override
-  public float getPrevCameraYaw() {
-    return this.player.prevCameraYaw;
-  }
-
-  /**
-   * Retrieves the camera yaw of this player.
-   *
-   * @return The camera yaw of this player.
-   */
-  @Override
-  public float getCameraYaw() {
-    return this.player.cameraYaw;
-  }
-
-  /**
-   * Retrieves the previous chasing position X-axis of this player.
-   *
-   * @return The previous chasing position X-axis  of this player.
-   */
-  @Override
-  public double getPrevChasingPosX() {
-    return this.player.prevChasingPosX;
-  }
-
-  /**
-   * Retrieves the previous chasing position Y-axis of this player.
-   *
-   * @return The previous chasing position Y-axis  of this player.
-   */
-  @Override
-  public double getPrevChasingPosY() {
-    return this.player.prevChasingPosY;
-  }
-
-  /**
-   * Retrieves the previous chasing position Z-axis of this player.
-   *
-   * @return The previous chasing position Z-axis  of this player.
-   */
-  @Override
-  public double getPrevChasingPosZ() {
-    return this.player.prevChasingPosZ;
-  }
-
-  /**
-   * Retrieves the chasing position X-axis of this player.
-   *
-   * @return The chasing position X-axis  of this player.
-   */
-  @Override
-  public double getChasingPosX() {
-    return this.player.chasingPosX;
-  }
-
-  /**
-   * Retrieves the chasing position Y-axis of this player.
-   *
-   * @return The chasing position Y-axis  of this player.
-   */
-  @Override
-  public double getChasingPosY() {
-    return this.player.chasingPosY;
-  }
-
-  /**
-   * Retrieves the  chasing position Z-axis of this player.
-   *
-   * @return The chasing position Z-axis  of this player.
-   */
-  @Override
-  public double getChasingPosZ() {
-    return this.player.chasingPosZ;
   }
 
   @Override

@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 import com.mojang.authlib.GameProfile;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.component.inject.implement.Implement;
+import net.labyfy.component.items.mapper.MinecraftItemMapper;
 import net.labyfy.component.player.RemoteClientPlayer;
 import net.labyfy.component.player.network.NetworkPlayerInfo;
 import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
@@ -39,6 +40,7 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
   private final SoundCategorySerializer<SoundCategory> soundCategorySerializer;
   private final SoundSerializer<SoundEvent> soundSerializer;
 
+  private final MinecraftItemMapper minecraftItemMapper;
   private final ClientWorld clientWorld;
 
   @Inject
@@ -54,7 +56,7 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
           PoseSerializer poseSerializer,
           SoundCategorySerializer soundCategorySerializer,
           SoundSerializer soundSerializer,
-          ClientWorld clientWorld) {
+          MinecraftItemMapper minecraftItemMapper, ClientWorld clientWorld) {
     this.remoteClientPlayerFactory = remoteClientPlayerFactory;
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
@@ -66,6 +68,7 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
     this.poseSerializer = poseSerializer;
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
+    this.minecraftItemMapper = minecraftItemMapper;
     this.clientWorld = clientWorld;
   }
 
@@ -86,6 +89,7 @@ public class VersionedRemoteClientPlayerProvider implements RemoteClientPlayer.P
             this.poseSerializer,
             this.soundCategorySerializer,
             this.soundSerializer,
+            this.minecraftItemMapper,
             this.clientWorld
     );
   }

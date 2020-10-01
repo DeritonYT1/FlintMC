@@ -7,6 +7,7 @@ import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.chat.component.ChatComponent;
 import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.items.inventory.player.PlayerInventory;
+import net.labyfy.component.items.mapper.MinecraftItemMapper;
 import net.labyfy.component.player.ClientPlayer;
 import net.labyfy.component.player.PlayerSkinProfile;
 import net.labyfy.component.player.gameprofile.GameProfile;
@@ -72,6 +73,8 @@ public class VersionedClientPlayer implements ClientPlayer {
   private final SoundSerializer<SoundEvent> soundSerializer;
   private final TabOverlay tabOverlay;
 
+  private final MinecraftItemMapper minecraftItemMapper;
+
   private final ClientWorld clientWorld;
   private final PlayerInventory playerInventory;
 
@@ -90,7 +93,7 @@ public class VersionedClientPlayer implements ClientPlayer {
           SoundCategorySerializer soundCategorySerializer,
           SoundSerializer soundSerializer,
           TabOverlay tabOverlay,
-          ClientWorld clientWorld, PlayerInventory playerInventory) {
+          MinecraftItemMapper minecraftItemMapper, ClientWorld clientWorld, PlayerInventory playerInventory) {
     this.handSerializer = handSerializer;
     this.handSideSerializer = handSideSerializer;
     this.gameModeSerializer = gameModeSerializer;
@@ -102,6 +105,7 @@ public class VersionedClientPlayer implements ClientPlayer {
     this.soundCategorySerializer = soundCategorySerializer;
     this.soundSerializer = soundSerializer;
     this.tabOverlay = tabOverlay;
+    this.minecraftItemMapper = minecraftItemMapper;
     this.clientWorld = clientWorld;
     this.playerInventory = playerInventory;
   }
@@ -525,8 +529,11 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @param hand      The hand of this player.
    */
   @Override
-  public void openBook(Object itemStack, Hand hand) {
-    Minecraft.getInstance().player.openBook((ItemStack) itemStack, this.handSerializer.serialize(hand));
+  public void openBook(net.labyfy.component.items.ItemStack itemStack, Hand hand) {
+    Minecraft.getInstance().player.openBook(
+            (ItemStack) this.minecraftItemMapper.toMinecraft(itemStack),
+            this.handSerializer.serialize(hand)
+    );
   }
 
   /**
@@ -879,10 +886,9 @@ public class VersionedClientPlayer implements ClientPlayer {
    *
    * @return The active item stack of this player
    */
-  // TODO: 04.09.2020 Replaces the Object to ItemStack when the (Item API?) is ready
   @Override
-  public Object getActiveItemStack() {
-    return Minecraft.getInstance().player.getActiveItemStack();
+  public net.labyfy.component.items.ItemStack getActiveItemStack() {
+    return this.minecraftItemMapper.fromMinecraft(Minecraft.getInstance().player.getActiveItemStack());
   }
 
   /**
@@ -1121,16 +1127,6 @@ public class VersionedClientPlayer implements ClientPlayer {
   }
 
   /**
-   * Sets the absorption amount of this player.
-   *
-   * @param amount The new absorption amount.
-   */
-  @Override
-  public void setAbsorptionAmount(float amount) {
-    Minecraft.getInstance().player.setAbsorptionAmount(amount);
-  }
-
-  /**
    * Retrieves the absorption amount of this player.
    *
    * @return Theabsorption amount of this player.
@@ -1138,6 +1134,16 @@ public class VersionedClientPlayer implements ClientPlayer {
   @Override
   public float getAbsorptionAmount() {
     return Minecraft.getInstance().player.getAbsorptionAmount();
+  }
+
+  /**
+   * Sets the absorption amount of this player.
+   *
+   * @param amount The new absorption amount.
+   */
+  @Override
+  public void setAbsorptionAmount(float amount) {
+    Minecraft.getInstance().player.setAbsorptionAmount(amount);
   }
 
   /**
@@ -1745,8 +1751,8 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @return The dropped item as an entity, or {@code null}
    */
   @Override
-  public Object dropItem(Object droppedItem, boolean traceItem) {
-    return Minecraft.getInstance().player.dropItem((ItemStack) droppedItem, traceItem);
+  public Object dropItem(net.labyfy.component.items.ItemStack droppedItem, boolean traceItem) {
+    return Minecraft.getInstance().player.dropItem((ItemStack) this.minecraftItemMapper.toMinecraft(droppedItem), traceItem);
   }
 
   /**
@@ -1759,8 +1765,8 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @return The dropped item as an entity, or {@code null}
    */
   @Override
-  public Object dropItem(Object droppedItem, boolean dropAround, boolean traceItem) {
-    return Minecraft.getInstance().player.dropItem((ItemStack) droppedItem, dropAround, traceItem);
+  public Object dropItem(net.labyfy.component.items.ItemStack droppedItem, boolean dropAround, boolean traceItem) {
+    return Minecraft.getInstance().player.dropItem((ItemStack) this.minecraftItemMapper.toMinecraft(droppedItem), dropAround, traceItem);
   }
 
   /**
@@ -1812,8 +1818,12 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @return An item to be fired or an empty item.
    */
   @Override
-  public Object findAmmo(Object shootable) {
-    return Minecraft.getInstance().player.findAmmo((ItemStack) shootable);
+  public net.labyfy.component.items.ItemStack findAmmo(net.labyfy.component.items.ItemStack shootable) {
+    return this.minecraftItemMapper.fromMinecraft(
+            Minecraft.getInstance().player.findAmmo(
+                    (ItemStack) this.minecraftItemMapper.toMinecraft(shootable)
+            )
+    );
   }
 
   /**
@@ -1823,8 +1833,8 @@ public class VersionedClientPlayer implements ClientPlayer {
    * @return {@code true} if the player can pick up the item, otherwise {@code false}
    */
   @Override
-  public boolean canPickUpItem(Object itemStack) {
-    return Minecraft.getInstance().player.canPickUpItem((ItemStack) itemStack);
+  public boolean canPickUpItem(net.labyfy.component.items.ItemStack itemStack) {
+    return Minecraft.getInstance().player.canPickUpItem((ItemStack) this.minecraftItemMapper.toMinecraft(itemStack));
   }
 
   /**
@@ -1949,8 +1959,8 @@ public class VersionedClientPlayer implements ClientPlayer {
   /**
    * Whether block actions are restricted for this player.
    *
-   * @param blockPos    This position of this block
-   * @param gameMode    This game mode of this player
+   * @param blockPos This position of this block
+   * @param gameMode This game mode of this player
    * @return {@code true} if this player has restricted block actions, otherwise {@code false}
    */
   @Override

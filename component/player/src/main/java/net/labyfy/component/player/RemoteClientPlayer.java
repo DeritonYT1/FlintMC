@@ -3,6 +3,7 @@ package net.labyfy.component.player;
 import com.google.inject.assistedinject.Assisted;
 import net.labyfy.chat.MinecraftComponentMapper;
 import net.labyfy.component.inject.assisted.AssistedFactory;
+import net.labyfy.component.items.mapper.MinecraftItemMapper;
 import net.labyfy.component.player.network.NetworkPlayerInfo;
 import net.labyfy.component.player.serializer.gameprofile.GameProfileSerializer;
 import net.labyfy.component.player.serializer.util.*;
@@ -49,6 +50,7 @@ public interface RemoteClientPlayer extends Player {
             @Assisted("poseSerializer") PoseSerializer poseSerializer,
             @Assisted("soundCategorySerializer") SoundCategorySerializer soundCategorySerializer,
             @Assisted("soundSerializer") SoundSerializer soundSerializer,
+            @Assisted("itemMapper") MinecraftItemMapper minecraftItemMapper,
             @Assisted("world") ClientWorld clientWorld
     );
 

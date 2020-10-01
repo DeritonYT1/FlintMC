@@ -1,6 +1,7 @@
 package net.labyfy.component.player;
 
 import net.labyfy.chat.component.ChatComponent;
+import net.labyfy.component.items.ItemStack;
 import net.labyfy.component.player.gameprofile.GameProfile;
 import net.labyfy.component.player.network.NetworkPlayerInfo;
 import net.labyfy.component.player.util.*;
@@ -208,8 +209,7 @@ public interface Player extends CooldownTracking {
    *
    * @return The active item stack of this player
    */
-  // TODO: 01.09.2020 Replaces the Object to ItemStack when the (Item API?) is ready
-  Object getActiveItemStack();
+  ItemStack getActiveItemStack();
 
   /**
    * Retrieves use count of the item.
@@ -799,39 +799,6 @@ public interface Player extends CooldownTracking {
   void addScore(int score);
 
   /**
-   * Whether the selected item can be dropped.
-   *
-   * @param dropEntireStack Whether the entire stack can be dropped.
-   * @return {@code true} if the selected item can be dropped, otherwise {@code false}
-   */
-  boolean drop(boolean dropEntireStack);
-
-  /**
-   * Retrieves the dropped item as an entity.
-   *
-   * @param droppedItem The dropped item
-   * @param traceItem   Whether the item can be traced.
-   * @return The dropped item as an entity, or {@code null}
-   */
-  // TODO: 05.09.2020 (Method Type) Replaces the Object to ItemEntity when the (Entity API?) is ready
-  // TODO: 05.09.2020 (Parameter 1) Replaces the Object to ItemStack when the (Item API?) is ready
-  Object dropItem(Object droppedItem, boolean traceItem);
-
-  /**
-   * Retrieves the dropped item as an entity.
-   *
-   * @param droppedItem The dropped item
-   * @param dropAround  If {@code true}, the item will be thrown in a random direction
-   *                    from the entity regardless of which direction the entity is facing
-   * @param traceItem   Whether the item can be traced.
-   * @return The dropped item as an entity, or {@code null}
-   */
-  // TODO: 05.09.2020 (Method Type) Replaces the Object to ItemEntity when the (Entity API?) is ready
-  // TODO: 05.09.2020 (Parameter 1) Replaces the Object to ItemStack when the (Item API?) is ready
-  Object dropItem(Object droppedItem, boolean dropAround, boolean traceItem);
-
-
-  /**
    * Retrieves the digging speed of the given block state for this player.
    *
    * @param blockState The block state that is to receive the dig speed.
@@ -872,25 +839,6 @@ public interface Player extends CooldownTracking {
    * @param actionBar Whether to send to the action bar.
    */
   void sendStatusMessage(ChatComponent component, boolean actionBar);
-
-  /**
-   * Finds shootable items in the inventory of this player.
-   *
-   * @param shootable The item to be fired.
-   * @return an item to be fired or an empty item.
-   */
-  // TODO: 05.09.2020 (Method Type) Replaces the Object to ItemStack when the Item API is ready
-  // TODO: 05.09.2020 (Parameter 1) Replaces the Object to ItemStack when the Item API is ready
-  Object findAmmo(Object shootable);
-
-  /**
-   * Whether the player can pick up the item.
-   *
-   * @param itemStack The item to be pick up
-   * @return {@code true} if the player can pick up the item, otherwise {@code false}
-   */
-  // TODO: 05.09.2020 Replaces the Object to ItemStack when the Item API is ready
-  boolean canPickUpItem(Object itemStack);
 
   /**
    * Adds should entity to this player.
@@ -983,94 +931,6 @@ public interface Player extends CooldownTracking {
   boolean isCollidedVertically();
 
   /**
-   * Opens a sign editor.
-   *
-   * @param signTileEntity The sign to be edited.
-   */
-  // TODO: 06.09.2020 Replaces the Object to SignTileEntity when the Entity API is ready
-  void openSignEditor(Object signTileEntity);
-
-  /**
-   * Opens a minecart command block.
-   *
-   * @param commandBlock The minecart command block to be opened.
-   */
-  // TODO: 06.09.2020 Replaces the Object to CommandBlockLogic when the Entity API / Command API is ready
-  void openMinecartCommandBlock(Object commandBlock);
-
-  /**
-   * Opens a command block.
-   *
-   * @param commandBlock The command block to be opened.
-   */
-  // TODO: 06.09.2020 Replaces the Object to CommandBlockTileEntity when the Entity API / Command API is ready
-  void openCommandBlock(Object commandBlock);
-
-  /**
-   * Opens a structure block.
-   *
-   * @param structureBlock The structure block to be opened.
-   */
-  // TODO: 06.09.2020 Replaces the Object to StructureBlockTileEntity when the Entity API is ready
-  void openStructureBlock(Object structureBlock);
-
-  /**
-   * Opens a jigsaw.
-   *
-   * @param jigsaw The jigsaw to be opened.
-   */
-  // TODO: 06.09.2020 Replaces the Object to JigsawTileEntity when the Entity API is ready
-  void openJigsaw(Object jigsaw);
-
-  /**
-   * Opens a horse inventory
-   *
-   * @param horse     The horse that has an inventory
-   * @param inventory Inventory of the horse
-   */
-  // TODO: 06.09.2020 (Parameter 1) Replaces the Object to AbstractHorseEntity when the Entity API is ready
-  // TODO: 06.09.2020 (Parameter 2) Replaces the Object to Inventory when the Inventory API is ready
-  void openHorseInventory(Object horse, Object inventory);
-
-  /**
-   * Opens a merchant inventory.
-   *
-   * @param merchantOffers  The offers of the merchant
-   * @param container       The container identifier for this merchant
-   * @param levelProgress   The level progress of this merchant.<br>
-   *                        <b>Note:</b><br>
-   *                        1 = Novice<br>
-   *                        2 = Apprentice<br>
-   *                        3 = Journeyman<br>
-   *                        4 = Expert<br>
-   *                        5 = Master
-   * @param experience      The total experience for this villager (Always 0 for the wandering trader)
-   * @param regularVillager {@code True} if this is a regular villager,
-   *                        otherwise {@code false} for the wandering trader. When {@code false},
-   *                        hides the villager level  and some other GUI elements
-   * @param refreshable     {@code True} for regular villagers and {@code false} for the wandering trader.
-   *                        If {@code true}, the "Villagers restock up to two times per day".
-   */
-  // TODO: 06.09.2020  (Parameter 1) Replaces the Object to MerchantOffers when the (Item API / Entity API)? is ready
-  void openMerchantInventory(
-          Object merchantOffers,
-          int container,
-          int levelProgress,
-          int experience,
-          boolean regularVillager,
-          boolean refreshable
-  );
-
-  /**
-   * Opens a book.
-   *
-   * @param itemStack The item stack which should be a book.
-   * @param hand      The hand of this player.
-   */
-  // TODO: 06.09.2020 (Parameter 1) Replaces Object to ItemStack when the Item API is ready.
-  void openBook(Object itemStack, Hand hand);
-
-  /**
    * Prepare this player for spawning.
    */
   void preparePlayerToSpawn();
@@ -1108,7 +968,6 @@ public interface Player extends CooldownTracking {
    */
   void updateGameMode(GameMode gameMode);
 
-
   /**
    * Enchants the given item stack with the cost.
    *
@@ -1116,78 +975,6 @@ public interface Player extends CooldownTracking {
    * @param cost      The cost of the enchant
    */
   void enchantItem(Object itemStack, int cost);
-
-  /**
-   * Retrieves the opened container of this player.
-   *
-   * @return The opened container of this player.
-   */
-  // TODO: 09.09.2020 Replaces the Object to Container when the Inventory/Item API is ready
-  Object getOpenedContainer();
-
-  /**
-   * Retrieves the container of this player.
-   *
-   * @return The container of this player.
-   */
-  // TODO: 09.09.2020 Replaces the Object to Container when the Inventory/Item API is ready
-  Object getPlayerContainer();
-
-  /**
-   * Retrieves the previous camera yaw of this player.
-   *
-   * @return The previous camera yaw of this player.
-   */
-  float getPrevCameraYaw();
-
-  /**
-   * Retrieves the camera yaw of this player.
-   *
-   * @return The camera yaw of this player.
-   */
-  float getCameraYaw();
-
-  /**
-   * Retrieves the previous chasing position X-axis of this player.
-   *
-   * @return The previous chasing position X-axis  of this player.
-   */
-  double getPrevChasingPosX();
-
-  /**
-   * Retrieves the previous chasing position Y-axis of this player.
-   *
-   * @return The previous chasing position Y-axis  of this player.
-   */
-  double getPrevChasingPosY();
-
-  /**
-   * Retrieves the previous chasing position Z-axis of this player.
-   *
-   * @return The previous chasing position Z-axis  of this player.
-   */
-  double getPrevChasingPosZ();
-
-  /**
-   * Retrieves the chasing position X-axis of this player.
-   *
-   * @return The chasing position X-axis  of this player.
-   */
-  double getChasingPosX();
-
-  /**
-   * Retrieves the chasing position Y-axis of this player.
-   *
-   * @return The chasing position Y-axis  of this player.
-   */
-  double getChasingPosY();
-
-  /**
-   * Retrieves the chasing position Z-axis of this player.
-   *
-   * @return The chasing position Z-axis  of this player.
-   */
-  double getChasingPosZ();
 
   /**
    * Retrieves the player skin profile.
