@@ -3,6 +3,8 @@ package net.labyfy.component.server;
 import com.google.inject.assistedinject.Assisted;
 import net.labyfy.component.inject.assisted.AssistedFactory;
 
+import java.net.InetSocketAddress;
+
 /**
  * An address of a minecraft server.
  */
@@ -45,6 +47,14 @@ public interface ServerAddress {
      * @return The new non-null address
      */
     ServerAddress create(@Assisted("ip") String ip, @Assisted("port") int port);
+
+    /**
+     * Creates a new address out of the given inet socket address.
+     *
+     * @param address The non-null address to be converted to a {@link ServerAddress}
+     * @return The new non-null address
+     */
+    ServerAddress create(@Assisted("socketAddress") InetSocketAddress address);
 
   }
 

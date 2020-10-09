@@ -13,10 +13,18 @@ public interface ServerController {
   boolean isConnected();
 
   /**
-   * Retrieves the currently connected server.
+   * Retrieves whether the client is currently connecting to a server and didn't succeed yet (in multiplayer).
    *
-   * @return The server or {@code null} if the client isn't connected with any server
+   * @return {@code true} if the client is connecting to a server, {@code false} otherwise
+   */
+  boolean isConnecting();
+
+  /**
+   * Retrieves the currently connected server, this also works if the client is currently connecting to a server.
+   *
+   * @return The server or {@code null} if the client isn't connected/connecting with any server
    * @see #isConnected()
+   * @see #isConnecting()
    */
   ConnectedServer getConnectedServer();
 

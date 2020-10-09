@@ -34,6 +34,14 @@ public class VersionedServerController implements ServerController {
    * {@inheritDoc}
    */
   @Override
+  public boolean isConnecting() {
+    return Minecraft.getInstance().currentScreen instanceof ConnectingScreen;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public ConnectedServer getConnectedServer() {
     return this.isConnected() ? this.connectedServer : null;
   }

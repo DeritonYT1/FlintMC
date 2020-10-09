@@ -31,6 +31,8 @@ public @interface Hook {
 
   String version() default "";
 
+  String cancelValue() default "";
+
   ExecutionTime[] executionTime() default ExecutionTime.AFTER;
 
   Class<? extends NameResolver> classNameResolver() default DefaultNameResolver.class;
@@ -42,16 +44,26 @@ public @interface Hook {
       DefaultMethodNameResolver.class;
 
   enum ExecutionTime {
-    BEFORE {
+    BEFORE(true) {
       public void insert(CtMethod ctMethod, String source) throws CannotCompileException {
         ctMethod.insertBefore(source);
       }
     },
-    AFTER {
+    AFTER(false) {
       public void insert(CtMethod ctMethod, String source) throws CannotCompileException {
         ctMethod.insertAfter(source);
       }
     };
+
+    private final boolean canReturn;
+
+    ExecutionTime(boolean canReturn) {
+      this.canReturn = canReturn;
+    }
+
+    public boolean canReturn() {
+      return this.canReturn;
+    }
 
     public abstract void insert(CtMethod ctMethod, String source) throws CannotCompileException;
   }

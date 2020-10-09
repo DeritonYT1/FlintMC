@@ -47,7 +47,7 @@ public class HookService implements ServiceHandler {
     this.version = (String) launchArguments.get("--game-version");
   }
 
-  public static void notify(
+  public static boolean notify(
       Object instance,
       Hook.ExecutionTime executionTime,
       Class<?> clazz,
@@ -61,11 +61,12 @@ public class HookService implements ServiceHandler {
     availableParameters.put(Key.get(Object[].class, Names.named("args")), args);
 
     Method declaredMethod = clazz.getDeclaredMethod(method, parameters);
-    InjectionHolder.getInjectedInstance(InjectedInvocationHelper.class)
+    Object value = InjectionHolder.getInjectedInstance(InjectedInvocationHelper.class)
         .invokeMethod(
             declaredMethod,
             InjectionHolder.getInjectedInstance(declaredMethod.getDeclaringClass()),
             availableParameters);
+    return value instanceof Boolean && (Boolean) value;
   }
 
   @Override
@@ -143,7 +144,7 @@ public class HookService implements ServiceHandler {
     }
   }
 
-  private void insert(CtMethod target, Hook.ExecutionTime executionTime, Method hook) throws CannotCompileException {
+  private void insert(CtMethod target, Hook annotation, Hook.ExecutionTime executionTime, Method hook) throws CannotCompileException {
     StringBuilder stringBuilder = new StringBuilder();
     for (Class<?> parameterType : hook.getParameterTypes()) {
       String className =
@@ -161,21 +162,55 @@ public class HookService implements ServiceHandler {
       }
     }
 
-    executionTime.insert(
-        target,
-        "net.labyfy.internal.component.transform.hook.HookService.notify("
-            + "this,"
-            + "net.labyfy.component.transform.hook.Hook.ExecutionTime."
-            + executionTime
-            + ","
-            + hook.getDeclaringClass().getName()
-            + ".class, \""
-            + hook.getName()
-            + "\", "
-            + (stringBuilder.toString().isEmpty()
-            ? "new Class[0]"
-            : "new Class[]{" + stringBuilder.toString() + "}")
-            + ", $args);");
+    String notifyCall = "net.labyfy.internal.component.transform.hook.HookService.notify("
+        + "this,"
+        + "net.labyfy.component.transform.hook.Hook.ExecutionTime."
+        + executionTime
+        + ","
+        + hook.getDeclaringClass().getName()
+        + ".class, \""
+        + hook.getName()
+        + "\", "
+        + (stringBuilder.length() == 0
+        ? "new Class[0]"
+        : "new Class[]{" + stringBuilder.toString() + "}")
+        + ", $args)";
+
+    if (!executionTime.canReturn()) {
+      executionTime.insert(target, notifyCall + ";");
+      return;
+    }
+
+    String returnValue = annotation.cancelValue();
+    try {
+      CtClass type = target.getReturnType();
+      if (returnValue.isEmpty()) {
+        switch (type.getName()) {
+          case "byte":
+          case "short":
+          case "int":
+          case "long":
+          case "float":
+          case "double":
+            returnValue = "0";
+            break;
+          case "boolean":
+            returnValue = "false";
+            break;
+          case "char":
+            returnValue = "' '";
+            break;
+          case "void":
+            break;
+          default:
+            returnValue = "null";
+            break;
+        }
+      }
+    } catch (NotFoundException ignored) {
+    }
+
+    executionTime.insert(target, "if (" + notifyCall + ") { return " + returnValue + "; }");
   }
 
   private void modify(HookEntry hookEntry, Hook hook, CtClass ctClass, Method callback) throws NotFoundException, CannotCompileException {
@@ -198,7 +233,7 @@ public class HookService implements ServiceHandler {
 
     if (declaredMethod != null) {
       for (Hook.ExecutionTime executionTime : hook.executionTime()) {
-        this.insert(declaredMethod, executionTime, callback);
+        this.insert(declaredMethod, hook, executionTime, callback);
       }
     }
   }

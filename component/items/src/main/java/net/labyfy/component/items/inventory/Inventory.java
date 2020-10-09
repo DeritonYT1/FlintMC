@@ -41,6 +41,7 @@ public interface Inventory {
    * Retrieves every item in this inventory ordered by their slot. Modifications to this array will have no effect.
    *
    * @return The non-null array of non-null contents in this inventory
+   * @see #getItem(int)
    */
   ItemStack[] getContents();
 
@@ -54,6 +55,13 @@ public interface Inventory {
 
   /**
    * Retrieves an item in a specific slot in this inventory.
+   *
+   * <ul>
+   * - Slots from 0 to 4 is the crafting inventory of a player. <p>
+   * - Slots from 5 to 8 is the armor inventory of a player. <p>
+   * - Slots from 9 to 35 is the main inventory of a player. <p>
+   * - Slots from 36 to 44 is the hotbar of a player. <p>
+   * </ul>
    *
    * @param slot The slot to get the item from
    * @return The non-null item out of this slot
@@ -69,6 +77,7 @@ public interface Inventory {
    * @param item The stack of items to set
    * @throws IndexOutOfBoundsException If the slot is either smaller than 0, or greater or equal to the highest possible
    *                                   slot in this inventory.
+   * @see #getItem(int)
    */
   void setItem(int slot, ItemStack item) throws IndexOutOfBoundsException;
 

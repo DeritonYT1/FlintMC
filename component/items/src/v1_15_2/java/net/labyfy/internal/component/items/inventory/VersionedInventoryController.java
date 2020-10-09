@@ -42,9 +42,9 @@ public class VersionedInventoryController extends DefaultInventoryController {
         itemRegistry,
         typeFactory.newBuilder()
             .registryName(NameSpacedKey.minecraft("player"))
-            .defaultDimension(other(41))
+            .defaultDimension(other(45))
             .build(),
-        other(41),
+        other(45),
         componentFactory,
         itemMapper)
     );

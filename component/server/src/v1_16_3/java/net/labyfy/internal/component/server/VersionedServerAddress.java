@@ -6,6 +6,8 @@ import com.google.inject.assistedinject.AssistedInject;
 import net.labyfy.component.inject.implement.Implement;
 import net.labyfy.component.server.ServerAddress;
 
+import java.net.InetSocketAddress;
+
 @Implement(value = ServerAddress.class, version = "1.16.3")
 public class VersionedServerAddress implements ServerAddress {
 
@@ -25,6 +27,11 @@ public class VersionedServerAddress implements ServerAddress {
 
     this.ip = address.getIP();
     this.port = address.getPort();
+  }
+
+  @AssistedInject
+  public VersionedServerAddress(@Assisted("socketAddress") InetSocketAddress address) {
+    this(address.getAddress().getHostName(), address.getPort());
   }
 
   /**

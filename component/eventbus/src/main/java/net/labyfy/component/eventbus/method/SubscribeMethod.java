@@ -66,7 +66,6 @@ public interface SubscribeMethod {
      * @param priority        The priority of the subscribed method.
      * @param phase           The phase of the subscribed method.
      * @param instance        The owner of the event method.
-     * @param executor        The event executor.
      * @param eventMethod     The subscribed method.
      * @param groupAnnotation An extra annotation for the subscribed method.
      * @return A created subscribed method.
@@ -75,7 +74,6 @@ public interface SubscribeMethod {
         @Assisted("priority") byte priority,
         @Assisted("phase") Subscribe.Phase phase,
         @Assisted("instance") Object instance,
-        @Assisted("executor") Executor executor,
         @Assisted("eventMethod") Method eventMethod,
         @Assisted("groupAnnotations") Collection<Annotation> groupAnnotation
     );

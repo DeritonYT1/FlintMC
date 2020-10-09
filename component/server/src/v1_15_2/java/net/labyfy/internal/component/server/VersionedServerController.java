@@ -3,6 +3,7 @@ package net.labyfy.internal.component.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.labyfy.component.inject.implement.Implement;
+import net.labyfy.component.processing.autoload.AutoLoad;
 import net.labyfy.component.server.ConnectedServer;
 import net.labyfy.component.server.ServerAddress;
 import net.labyfy.component.server.ServerController;
@@ -12,6 +13,7 @@ import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.text.TranslationTextComponent;
 
 @Singleton
+@AutoLoad(round = 11) // round after shadow
 @Implement(value = ServerController.class, version = "1.15.2")
 public class VersionedServerController implements ServerController {
 
@@ -34,8 +36,16 @@ public class VersionedServerController implements ServerController {
    * {@inheritDoc}
    */
   @Override
+  public boolean isConnecting() {
+    return this.connectedServer.isConnecting();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public ConnectedServer getConnectedServer() {
-    return this.isConnected() ? this.connectedServer : null;
+    return this.isConnected() || this.isConnecting() ? this.connectedServer : null;
   }
 
   /**

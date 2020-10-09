@@ -25,4 +25,6 @@ dependencies {
     api project(':component:inject')
     api project(':component:minecraft')
     api project(':component:chat')
+    api project(':component:transform:shadow')
+    api project(':component:eventbus:basic-events')
 }

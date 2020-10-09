@@ -13,6 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.util.NonNullList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VersionedPlayerInventory extends VersionedInventory implements PlayerInventory {
 
   private final MinecraftItemMapper itemMapper;
@@ -26,7 +29,7 @@ public class VersionedPlayerInventory extends VersionedInventory implements Play
     return this.itemMapper.fromMinecraft(inventory.get(slot));
   }
 
-  private ItemStack[] map(NonNullList<net.minecraft.item.ItemStack> inventory) {
+  private ItemStack[] map(List<net.minecraft.item.ItemStack> inventory) {
     ItemStack[] result = new ItemStack[inventory.size()];
     for (int i = 0; i < inventory.size(); i++) {
       result[i] = this.itemMapper.fromMinecraft(inventory.get(i));
@@ -38,21 +41,12 @@ public class VersionedPlayerInventory extends VersionedInventory implements Play
   public ItemStack getItem(int slot) throws IndexOutOfBoundsException {
     this.validateSlot(slot);
 
-    if (slot >= 0 && slot <= 35) {
-      return this.getItem(Minecraft.getInstance().player.inventory.mainInventory, slot);
-    }
-    if (slot >= 36 && slot <= 39) {
-      return this.getItem(Minecraft.getInstance().player.inventory.armorInventory, slot - 36);
-    }
-    if (this.getHandSlot(PlayerHand.OFF_HAND) == slot) {
-      return this.getItem(Minecraft.getInstance().player.inventory.offHandInventory, 0);
-    }
-    throw new IndexOutOfBoundsException("Invalid slot provided: " + slot);
+    return this.mapper.fromMinecraft(Minecraft.getInstance().player.inventory.getStackInSlot(slot));
   }
 
   @Override
   public void setItem(int slot, ItemStack item) throws IndexOutOfBoundsException {
-    Minecraft.getInstance().player.inventory.mainInventory.set(slot, super.mapToVanilla(item));
+    Minecraft.getInstance().player.inventory.setInventorySlotContents(slot, super.mapToVanilla(item));
   }
 
   @Override
@@ -95,7 +89,12 @@ public class VersionedPlayerInventory extends VersionedInventory implements Play
 
   @Override
   public ItemStack[] getContents() {
-    return this.map(Minecraft.getInstance().player.inventory.mainInventory);
+    net.minecraft.entity.player.PlayerInventory inventory = Minecraft.getInstance().player.inventory;
+    List<net.minecraft.item.ItemStack> items = new ArrayList<>();
+    items.addAll(inventory.mainInventory);
+    items.addAll(inventory.armorInventory);
+    items.addAll(inventory.offHandInventory);
+    return this.map(items);
   }
 
   @Override

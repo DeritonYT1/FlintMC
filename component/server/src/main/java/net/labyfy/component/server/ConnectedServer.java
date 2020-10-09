@@ -7,9 +7,9 @@ import java.util.concurrent.CompletableFuture;
 public interface ConnectedServer {
 
   /**
-   * Retrieves the address of the server which the client is connected to.
+   * Retrieves the address of the server which the client is connected/connecting to.
    *
-   * @return The address of the server or {@code null} if the client is not connected to any server
+   * @return The address of the server or {@code null} if the client is not connected/connecting to any server
    */
   ServerAddress getAddress();
 
@@ -19,6 +19,13 @@ public interface ConnectedServer {
    * @return {@code true} if the client is connected to a server, {@code false} otherwise
    */
   boolean isConnected();
+
+  /**
+   * Retrieves whether the client is currently connecting to a server and didn't succeed yet (in multiplayer).
+   *
+   * @return {@code true} if the client is connecting to a server, {@code false} otherwise
+   */
+  boolean isConnecting();
 
   /**
    * Uses  {@link net.labyfy.component.server.status.ServerStatusResolver#resolveStatus(ServerAddress)} to get the

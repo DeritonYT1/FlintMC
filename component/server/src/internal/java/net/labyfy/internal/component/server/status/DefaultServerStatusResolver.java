@@ -3,6 +3,7 @@ package net.labyfy.internal.component.server.status;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.labyfy.component.inject.implement.Implement;
+import net.labyfy.component.inject.primitive.InjectionHolder;
 import net.labyfy.component.resources.ResourceLocationProvider;
 import net.labyfy.component.server.ServerAddress;
 import net.labyfy.component.server.status.ServerFavicon;
@@ -22,14 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultServerStatusResolver implements ServerStatusResolver {
 
   private final Map<ServerAddress, PendingStatusRequest> pendingRequests = new ConcurrentHashMap<>();
-  private final PendingStatusRequest.Factory statusRequestFactory;
   private final ServerFavicon defaultFavicon;
 
   @Inject
   public DefaultServerStatusResolver(ResourceLocationProvider resourceLocationProvider,
-                                     PendingStatusRequest.Factory statusRequestFactory,
                                      ServerFavicon.Factory faviconFactory) {
-    this.statusRequestFactory = statusRequestFactory;
     this.defaultFavicon = faviconFactory.createDefault(resourceLocationProvider.get("textures/misc/unknown_server.png"));
   }
 
@@ -45,7 +43,7 @@ public class DefaultServerStatusResolver implements ServerStatusResolver {
       }
     }
 
-    PendingStatusRequest request = this.statusRequestFactory.create(address, this.defaultFavicon);
+    PendingStatusRequest request = InjectionHolder.getInjectedInstance(PendingStatusRequest.Factory.class).create(address, this.defaultFavicon);
 
     request.getFuture().thenAccept(status -> this.pendingRequests.remove(address));
     this.pendingRequests.put(address, request);

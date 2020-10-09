@@ -98,6 +98,9 @@ findProject(':component:chat')?.name = 'chat'
 include 'component:eventbus'
 findProject(':component:eventbus')?.name = 'eventbus'
 
+include 'component:eventbus:basic-events'
+findProject(':component:eventbus:basic-events')?.name = 'basic-events'
+
 include 'component:server'
 findProject(':component:server')?.name = 'server'
 

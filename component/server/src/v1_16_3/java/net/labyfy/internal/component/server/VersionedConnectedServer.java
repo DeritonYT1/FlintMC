@@ -9,8 +9,11 @@ import net.labyfy.component.server.ConnectedServer;
 import net.labyfy.component.server.ServerAddress;
 import net.labyfy.component.server.status.ServerStatus;
 import net.labyfy.component.server.status.ServerStatusResolver;
+import net.labyfy.internal.component.server.shadow.AccessibleConnectingScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ConnectingScreen;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.util.ResourceLocation;
@@ -33,9 +36,22 @@ public class VersionedConnectedServer implements ConnectedServer {
     this.serverAddressFactory = serverAddressFactory;
   }
 
-  private SocketAddress getRawAddress() {
+  private SocketAddress getConnectedAddress() {
     ClientPlayNetHandler connection = Minecraft.getInstance().getConnection();
     return connection != null ? connection.getNetworkManager().getRemoteAddress() : null;
+  }
+
+  private SocketAddress getConnectingAddress() {
+    if (!(Minecraft.getInstance().currentScreen instanceof ConnectingScreen)) {
+      return null;
+    }
+
+    AccessibleConnectingScreen screen = (AccessibleConnectingScreen) Minecraft.getInstance().currentScreen;
+    NetworkManager networkManager = screen.getNetworkManager();
+    if (networkManager == null) {
+      return null;
+    }
+    return networkManager.getRemoteAddress();
   }
 
   /**
@@ -43,10 +59,14 @@ public class VersionedConnectedServer implements ConnectedServer {
    */
   @Override
   public ServerAddress getAddress() {
-    SocketAddress address = this.getRawAddress();
+    SocketAddress address = this.getConnectedAddress();
+    if (address == null) {
+      address = this.getConnectingAddress();
+    }
+
     if (address instanceof InetSocketAddress) {
       InetSocketAddress inetAddress = (InetSocketAddress) address;
-      return this.serverAddressFactory.create(inetAddress.getAddress().getHostAddress(), inetAddress.getPort());
+      return this.serverAddressFactory.create(inetAddress.getAddress().getHostName(), inetAddress.getPort());
     }
 
     return null;
@@ -57,7 +77,15 @@ public class VersionedConnectedServer implements ConnectedServer {
    */
   @Override
   public boolean isConnected() {
-    return this.getRawAddress() instanceof InetSocketAddress;
+    return this.getConnectedAddress() instanceof InetSocketAddress;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isConnecting() {
+    return this.getConnectingAddress() instanceof InetSocketAddress;
   }
 
   /**

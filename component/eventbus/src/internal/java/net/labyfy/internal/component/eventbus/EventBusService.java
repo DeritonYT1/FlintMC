@@ -9,14 +9,13 @@ import net.labyfy.component.eventbus.event.filter.EventGroup;
 import net.labyfy.component.eventbus.event.subscribe.PostSubscribe;
 import net.labyfy.component.eventbus.event.subscribe.PreSubscribe;
 import net.labyfy.component.eventbus.event.subscribe.Subscribe;
-import net.labyfy.component.eventbus.method.Executor;
 import net.labyfy.component.eventbus.method.SubscribeMethod;
+import net.labyfy.component.service.ServiceLoadException;
 import net.labyfy.component.stereotype.identifier.Identifier;
 import net.labyfy.component.stereotype.identifier.LocatedIdentifiedAnnotation;
 import net.labyfy.component.stereotype.service.Service;
 import net.labyfy.component.stereotype.service.ServiceHandler;
 import net.labyfy.component.stereotype.service.ServiceNotFoundException;
-import net.labyfy.internal.component.eventbus.exception.ExecutorGenerationException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -32,7 +31,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class EventBusService implements ServiceHandler {
 
   private final AtomicReference<Injector> injectorReference;
-  private final Executor.Factory factory;
   private final SubscribeMethod.Factory subscribedMethodFactory;
 
   private final EventBus eventBus;
@@ -40,14 +38,12 @@ public class EventBusService implements ServiceHandler {
   @Inject
   private EventBusService(
           @Named("injectorReference") AtomicReference injectorReference,
-          Executor.Factory executorFactory,
           SubscribeMethod.Factory subscribedMethodFactory,
           EventBus eventBus
   ) {
     this.injectorReference = injectorReference;
     this.subscribedMethodFactory = subscribedMethodFactory;
     this.eventBus = eventBus;
-    this.factory = executorFactory;
   }
 
   /**
@@ -59,10 +55,6 @@ public class EventBusService implements ServiceHandler {
     LocatedIdentifiedAnnotation locatedIdentifiedAnnotation = property.getProperty().getLocatedIdentifiedAnnotation();
     Annotation subscribe = locatedIdentifiedAnnotation.getAnnotation();
     Method method = locatedIdentifiedAnnotation.getLocation();
-
-    if (method.getParameterCount() != 1) {
-      throw new IllegalArgumentException("Method " + method.getName() + " in " + method.getDeclaringClass().getName() + " doesn't have exactly one parameter");
-    }
 
     Class<?> eventClass = method.getParameterTypes()[0];
     Collection<Annotation> groupAnnotations = new ArrayList<>();
@@ -77,14 +69,6 @@ public class EventBusService implements ServiceHandler {
 
     Object instance = this.injectorReference.get().getInstance(method.getDeclaringClass());
 
-    Executor executor;
-
-    try {
-      executor = this.factory.create(instance, method);
-    } catch (Throwable throwable) {
-      throw new ExecutorGenerationException("Encountered an exception while creating an event subscriber for method \"" + method + "\"!", throwable);
-    }
-
     byte priority;
     Subscribe.Phase phase;
     if (subscribe instanceof PreSubscribe) {
@@ -97,7 +81,7 @@ public class EventBusService implements ServiceHandler {
       priority = ((Subscribe) subscribe).priority();
       phase = ((Subscribe) subscribe).phase();
     } else {
-      throw new ExecutorGenerationException("Unknown subscribe annotation: " + subscribe.annotationType().getName());
+      throw new ServiceLoadException("Unknown subscribe annotation: " + subscribe);
     }
 
     // Initializes a new subscribe method
@@ -105,7 +89,6 @@ public class EventBusService implements ServiceHandler {
             priority,
             phase,
             instance,
-            executor,
             method,
             groupAnnotations
     );
