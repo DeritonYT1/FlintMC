@@ -22,6 +22,12 @@ repositories {
     mavenCentral()
 }
 
+val allProjectsJava: MutableList<SourceDirectorySet> = ArrayList()
+val allProjectsClasspath: MutableList<FileCollection> = ArrayList()
+
+tasks.create<Javadoc>("generateAllDocs") {
+    setDestinationDir(file("docs"))
+}
 
 subprojects {
 
@@ -38,7 +44,16 @@ subprojects {
         tasks.withType<JavaCompile> {
             options.isFork = true
         }
+
+        allProjectsJava.add(sourceSets.getByName("main").allJava)
+        allProjectsClasspath.add(sourceSets.getByName("main").compileClasspath)
     }
+}
+
+tasks.create<Javadoc>("allDocs") {
+    setDestinationDir(file("generated-docs"))
+    setSource(allProjectsJava)
+    classpath = files(allProjectsClasspath)
 }
 
 allprojects {
